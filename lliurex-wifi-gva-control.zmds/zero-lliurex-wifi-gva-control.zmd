@@ -1,0 +1,3 @@
+#!/bin/bash
+exec lliurex-wifi-gva-control
+exit 0

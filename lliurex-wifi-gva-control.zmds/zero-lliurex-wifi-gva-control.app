@@ -1,0 +1,16 @@
+Name=zero-lliurex-wifi-gva-control
+Name[en]=WIFI GVA Configuration
+Name[es]=Configuración de WIFI GVA
+Name[qcv]=Configuració de WIFI GVA
+Name[ca@valencia]=Configuració de WIFI GVA
+Name[ca_ES]=Configuració de WIFI GVA
+Comment= Tool to configure the educational WIFI of the GVA
+Comment[en]=Tool to configure the educational WIFI of the GVA
+Comment[es]=Herramienta para configurar las WIFI educativas de la GVA
+Comment[qcv]=Eina per a configurar les WIFI educatives de la GVA
+Comment[ca@valencia]=Eina per a configurar les WIFI educatives de la GVA
+Comment[ca_ES]=Eina per a configurar les WIFI educatives de la GVA
+Category=Network
+Icon=zero-lliurex-wifi-gva-control
+ScriptPath=zero-lliurex-wifi-gva-control.zmd
+Groups=sudo;admins;teachers
