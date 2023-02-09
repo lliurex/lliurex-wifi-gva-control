@@ -373,9 +373,6 @@ class LliurexWifiControl(QObject):
 					self.changeInPassword=False
 				
 				self._manageChanges()
-		else:
-			self.showSettingsMessage=[False,"","Success"]
-
 	
 	#def managePassword
 
@@ -393,9 +390,6 @@ class LliurexWifiControl(QObject):
 					self.errorInPassword=False
 			else:
 				self.showSettingsMessage=[True,LliurexWifiControl.n4dMan.ERROR_PASSWORD_EMPTY,"Error"]
-
-		else:
-			self.showSettingsMessage=[False,"","Success"]
 
 		self.initialPassword=False
 
@@ -479,7 +473,7 @@ class LliurexWifiControl(QObject):
 			self.showSettingsMessage=[True,self.updateInfoT.ret[1],"Success"]
 			self.closeGui=True
 		else:
-			self.showSettingsMessage=[True,self.updateInfo.ret[1],"Error"]
+			self.showSettingsMessage=[True,self.updateInfoT.ret[1],"Error"]
 			self.closeGui=False
 
 
