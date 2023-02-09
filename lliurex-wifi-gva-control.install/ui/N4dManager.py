@@ -37,7 +37,7 @@ class N4dManager:
 		tk=n4d.client.Ticket(ticket)
 		self.client=n4d.client.Client(ticket=tk)
 
-		self.writeLog("Init session in lliurex-wifi-control GUI")
+		self.writeLog("Init session in lliurex-wifi-gva-control GUI")
 		self.writeLog("User login in GUI: %s"%self.currentUser)
 	
 	#def setServer

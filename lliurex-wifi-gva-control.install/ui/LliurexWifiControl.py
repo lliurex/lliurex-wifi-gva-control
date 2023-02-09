@@ -358,13 +358,12 @@ class LliurexWifiControl(QObject):
 	@Slot('QVariantList')
 	def managePassword(self,value):
 
-		if not self.initialPassword:
-			self.showSettingsMessage=[False,"","Success"]
-
+		if not self.initialPassword and self.passwordEntryEnabled:
 			if value[0]!=value[1]:
 				self.showSettingsMessage=[True,LliurexWifiControl.n4dMan.ERROR_PASSWORDS_NOT_MATCH,"Error"]
 				self.errorInPassword=True
 			else:
+				self.showSettingsMessage=[False,"","Success"]
 				self.errorInPassword=False
 				if value[0]!=self.currentPassword:
 					self.currentPassword=value[0]
@@ -374,6 +373,9 @@ class LliurexWifiControl(QObject):
 					self.changeInPassword=False
 				
 				self._manageChanges()
+		else:
+			self.showSettingsMessage=[False,"","Success"]
+
 	
 	#def managePassword
 
@@ -381,16 +383,19 @@ class LliurexWifiControl(QObject):
 	def changeInPasswordEntry(self,value):
 
 		if not self.initialPassword:
-			self.showSettingsMessage=[False,"","Success"]
 			self.showConfirmPassword=True
 			if value[0]!="":
 				if value[0]!=value[1]:
 					self.errorInPassword=True
 					self.showSettingsMessage=[True,LliurexWifiControl.n4dMan.ERROR_PASSWORDS_NOT_MATCH,"Error"]
 				else:
+					self.showSettingsMessage=[False,"","Success"]
 					self.errorInPassword=False
 			else:
 				self.showSettingsMessage=[True,LliurexWifiControl.n4dMan.ERROR_PASSWORD_EMPTY,"Error"]
+
+		else:
+			self.showSettingsMessage=[False,"","Success"]
 
 		self.initialPassword=False
 
@@ -401,6 +406,7 @@ class LliurexWifiControl(QObject):
 
 		if self.currentWifiOption==3:
 			self.passwordEntryEnabled=True
+			self.initialPassword=False
 
 	#def editPasswordBtn
 
@@ -425,6 +431,7 @@ class LliurexWifiControl(QObject):
 		self.currentPassword=LliurexWifiControl.n4dMan.currentPassword
 		self.showSettingsMessage=[False,"","Success"]
 		self.initialPassword=False
+		self.changeInPassword=False
 
 		if not self.isWifiEnabled:
 			self.passwordEntryEnabled=False
@@ -485,6 +492,7 @@ class LliurexWifiControl(QObject):
 		self.initialPassword=True
 		self.showConfirmPassword=False
 		self.passwordEntryEnabled=False
+		self.changeInPassword=False
 		self.closePopUp=True
 		self.closeGui=True
 

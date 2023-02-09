@@ -94,7 +94,7 @@ Rectangle{
                         id:autoLoginOption
                         checked:getWifiOption(3)
                         enabled:enableWifiCb.checked?true:false
-                        text:"WIFI_ALU "+i18nd("lliurex-wifi-gva-control","with automatic login")
+                        text:"WIFI_ALU: "+i18nd("lliurex-wifi-gva-control","automatic login with alumnat user")
                         onToggled:{
                             wifiControlBridge.manageWifiOptions(3)
                             confirmPasswordValue.text=""
