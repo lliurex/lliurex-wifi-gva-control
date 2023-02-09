@@ -1131,7 +1131,7 @@
      inkscape:pageshadow="2"
      inkscape:zoom="2.8284271"
      inkscape:cx="108.54089"
-     inkscape:cy="2.8284271"
+     inkscape:cy="31.112699"
      inkscape:document-units="px"
      inkscape:current-layer="g4147-2"
      showgrid="false"
@@ -1211,7 +1211,7 @@
        style="fill:#ffffff">
       <g
          id="g3380-1"
-         transform="matrix(0.88457364,0,0,2.0274684,-706.3425,282.76626)"
+         transform="matrix(0.88457364,0,0,2.1423118,-706.3425,277.18561)"
          style="fill:#ffffff;fill-opacity:1">
         <g
            id="g4147-2-3"
@@ -1252,8 +1252,7 @@
            y="-375.7666"
            id="tspan1932-7">Control</tspan></text>
       <g
-         aria-label="WIFI GVA 
-Control"
+         aria-label="WIFI GVA  Control"
          transform="scale(0.92819382,-1.0773612)"
          id="text9164-57-3-3"
          style="font-size:22.2767px;line-height:1.25;stroke:#000000;stroke-width:0.928193">
