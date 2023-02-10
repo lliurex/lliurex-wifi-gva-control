@@ -389,6 +389,7 @@ class LliurexWifiControl(QObject):
 					self.showSettingsMessage=[False,"","Success"]
 					self.errorInPassword=False
 			else:
+				self.errorInPassword=True
 				self.showSettingsMessage=[True,LliurexWifiControl.n4dMan.ERROR_PASSWORD_EMPTY,"Error"]
 
 		self.initialPassword=False
@@ -454,6 +455,8 @@ class LliurexWifiControl(QObject):
 		if self.changeInOption and self.currentWifiOption==3:
 			if self.currentPassword=="":
 				self.showSettingsMessage=[True,LliurexWifiControl.n4dMan.ERROR_PASSWORD_EMPTY,"Error"]
+				if self.showChangesDialog:
+					self.showChangesDialog=False
 				nextStep=False
 		if nextStep:
 			self.showSettingsMessage=[False,"","Success"]
@@ -487,6 +490,7 @@ class LliurexWifiControl(QObject):
 		self.showConfirmPassword=False
 		self.passwordEntryEnabled=False
 		self.changeInPassword=False
+		self.errorInPassword=False
 		self.closePopUp=True
 		self.closeGui=True
 
@@ -495,10 +499,10 @@ class LliurexWifiControl(QObject):
 	@Slot()
 	def cancelChanges(self):
 
-		self.showSettingsMessage=[False,"","Success"]
 		self.closePopUp=False
 		self.showChangesDialog=False
 		self._initForm()
+		self.showSettingsMessage=[False,"","Success"]
 
 	#def cancelChanges
 

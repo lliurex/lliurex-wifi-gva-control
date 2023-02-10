@@ -27,6 +27,7 @@ class N4dManager:
 		self.currentWifiOption=2
 		self.currentPassword=""
 		self.wifiConfiguration=0
+		self.currentAutologinStatus=False
 		
 	#def __init__
 
@@ -56,7 +57,8 @@ class N4dManager:
 			self.writeLog("Wifi Control. %s configuration:"%step)
 			self.wifiConfiguration=self.client.EscolesConectades.get_settings()
 			wifiPassword=self.client.EscolesConectades.get_autologin()
-			
+			self.currentAutologinStatus=self._checkIfAutologinIsEnabled()
+
 			if self.wifiConfiguration in [0,1,2,3]:
 				if self.wifiConfiguration==0:
 					self.isWifiEnabled=False
@@ -68,7 +70,8 @@ class N4dManager:
 				self.currentPassword=wifiPassword
 
 			self.writeLog("- Current Wifi Option: %s"%(self.wifiConfiguration))
-
+			self.writeLog("- Autologin: %s"%(str(self.currentAutologinStatus)))
+			
 			return True
 
 		except Exception as e:
@@ -103,13 +106,17 @@ class N4dManager:
 			if currentWifiOption==3:
 				actionAutologin=0
 			else:
-				actionAutologin=1
+				if self.currentAutologinStatus:
+					actionAutologin=1
 		
 		if currentWifiOption==3:
 			if currentPassword!=self.currentPassword:
 				changePassword=True
 				if actionAutologin==-1:
-					actionAutologin=2		
+					if self.currentAutologinStatus:
+						actionAutologin=2
+					else:
+						actionAutologin=0		
 
 		if changeWifi:
 			self.writeLog("Changes in wifi configuration:")
@@ -135,7 +142,7 @@ class N4dManager:
 
 
 		if actionAutologin!=-1:
-			self.writeLog("Changes in Autologin")
+			self.writeLog("Changes in autologin")
 			try:
 				if actionAutologin==0:
 					self.writeLog("- Action: Enable autologin")
@@ -145,12 +152,7 @@ class N4dManager:
 					ret=self.client.AlumnatAccountManager.disable_alumnat_user()
 				elif actionAutologin==2:
 					self.writeLog("- Action: Updated password")
-					isAutologinEnabled=self.client.AlumnatAccountManager.get_alumnat_status()['status']
-					print(isAutologinEnabled)
-					if isAutologinEnabled:
-						ret=self.client.AlumnatAccountManager.fix_alumnat_password(currentPassword)
-					else:
-						ret=self.client.AlumnatAccountManager.enable_alumnat_user(currentPassword)
+					ret=self.client.AlumnatAccountManager.fix_alumnat_password(currentPassword)
 				
 				self.writeLog("- Result: Changes apply successful")
 			
@@ -169,6 +171,17 @@ class N4dManager:
 		return result
 
 	#def applyChanges
+
+	def _checkIfAutologinIsEnabled(self):
+
+		try:
+			ret=self.client.AlumnatAccountManager.get_alumnat_status()['status']
+		except:
+			ret=False
+
+		return ret
+
+	#def __checkIfAutologinIsEnabled
 
 	def writeLog(self,msg):
 
