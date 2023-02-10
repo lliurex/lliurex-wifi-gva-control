@@ -455,6 +455,8 @@ class LliurexWifiControl(QObject):
 		if self.changeInOption and self.currentWifiOption==3:
 			if self.currentPassword=="":
 				self.showSettingsMessage=[True,LliurexWifiControl.n4dMan.ERROR_PASSWORD_EMPTY,"Error"]
+				if self.showChangesDialog:
+					self.showChangesDialog=False
 				nextStep=False
 		if nextStep:
 			self.showSettingsMessage=[False,"","Success"]
