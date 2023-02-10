@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-02-09 08:28+0100\n"
+"POT-Creation-Date: 2023-02-10 09:23+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -30,87 +30,91 @@ msgid "WIFI GVA connection configuration"
 msgstr ""
 
 #: ../lliurex-wifi-gva-control.install/ui/rsrc/WifiOptions.qml:43
-msgid "Activate automatic connection to the Wifi. Default connection:"
+msgid "Activate automatic connection to the Wifi"
 msgstr ""
 
-#: ../lliurex-wifi-gva-control.install/ui/rsrc/WifiOptions.qml:97
+#: ../lliurex-wifi-gva-control.install/ui/rsrc/WifiOptions.qml:60
+msgid "Default connection:"
+msgstr ""
+
+#: ../lliurex-wifi-gva-control.install/ui/rsrc/WifiOptions.qml:105
 msgid "automatic login with alumnat user"
 msgstr ""
 
-#: ../lliurex-wifi-gva-control.install/ui/rsrc/WifiOptions.qml:115
+#: ../lliurex-wifi-gva-control.install/ui/rsrc/WifiOptions.qml:123
 msgid "Password:"
 msgstr ""
 
-#: ../lliurex-wifi-gva-control.install/ui/rsrc/WifiOptions.qml:143
-#: ../lliurex-wifi-gva-control.install/ui/rsrc/WifiOptions.qml:238
+#: ../lliurex-wifi-gva-control.install/ui/rsrc/WifiOptions.qml:151
+#: ../lliurex-wifi-gva-control.install/ui/rsrc/WifiOptions.qml:246
 msgid "Click to show password"
 msgstr ""
 
-#: ../lliurex-wifi-gva-control.install/ui/rsrc/WifiOptions.qml:194
+#: ../lliurex-wifi-gva-control.install/ui/rsrc/WifiOptions.qml:202
 msgid "Click to change password"
 msgstr ""
 
-#: ../lliurex-wifi-gva-control.install/ui/rsrc/WifiOptions.qml:206
+#: ../lliurex-wifi-gva-control.install/ui/rsrc/WifiOptions.qml:214
 msgid "Confirm password:"
 msgstr ""
 
-#: ../lliurex-wifi-gva-control.install/ui/rsrc/WifiOptions.qml:275
+#: ../lliurex-wifi-gva-control.install/ui/rsrc/WifiOptions.qml:283
 #: ../lliurex-wifi-gva-control.install/ui/rsrc/ChangesDialog.qml:53
 msgid "Apply"
 msgstr ""
 
-#: ../lliurex-wifi-gva-control.install/ui/rsrc/WifiOptions.qml:298
+#: ../lliurex-wifi-gva-control.install/ui/rsrc/WifiOptions.qml:306
 #: ../lliurex-wifi-gva-control.install/ui/rsrc/ChangesDialog.qml:82
 msgid "Cancel"
 msgstr ""
 
-#: ../lliurex-wifi-gva-control.install/ui/rsrc/WifiOptions.qml:318
+#: ../lliurex-wifi-gva-control.install/ui/rsrc/WifiOptions.qml:330
 msgid "Wifi configuration"
 msgstr ""
 
-#: ../lliurex-wifi-gva-control.install/ui/rsrc/WifiOptions.qml:320
+#: ../lliurex-wifi-gva-control.install/ui/rsrc/WifiOptions.qml:332
 msgid ""
 "The are pending changes to apply.\n"
 "Do you want apply the changes or discard them?"
 msgstr ""
 
-#: ../lliurex-wifi-gva-control.install/ui/rsrc/WifiOptions.qml:365
+#: ../lliurex-wifi-gva-control.install/ui/rsrc/WifiOptions.qml:377
 msgid "Changes applied successfully"
 msgstr ""
 
-#: ../lliurex-wifi-gva-control.install/ui/rsrc/WifiOptions.qml:368
+#: ../lliurex-wifi-gva-control.install/ui/rsrc/WifiOptions.qml:380
 msgid "Error changing WIFI settings"
 msgstr ""
 
-#: ../lliurex-wifi-gva-control.install/ui/rsrc/WifiOptions.qml:371
+#: ../lliurex-wifi-gva-control.install/ui/rsrc/WifiOptions.qml:383
 msgid "Error changing password for autologin"
 msgstr ""
 
-#: ../lliurex-wifi-gva-control.install/ui/rsrc/WifiOptions.qml:374
+#: ../lliurex-wifi-gva-control.install/ui/rsrc/WifiOptions.qml:386
 msgid "Error changing autogin activation"
 msgstr ""
 
-#: ../lliurex-wifi-gva-control.install/ui/rsrc/WifiOptions.qml:377
+#: ../lliurex-wifi-gva-control.install/ui/rsrc/WifiOptions.qml:389
 msgid "Multiple errors have ocurred while applying changes"
 msgstr ""
 
-#: ../lliurex-wifi-gva-control.install/ui/rsrc/WifiOptions.qml:379
+#: ../lliurex-wifi-gva-control.install/ui/rsrc/WifiOptions.qml:391
 msgid "Passwords must match"
 msgstr ""
 
-#: ../lliurex-wifi-gva-control.install/ui/rsrc/WifiOptions.qml:382
+#: ../lliurex-wifi-gva-control.install/ui/rsrc/WifiOptions.qml:394
 msgid "You must enter a password"
 msgstr ""
 
-#: ../lliurex-wifi-gva-control.install/ui/rsrc/WifiOptions.qml:385
+#: ../lliurex-wifi-gva-control.install/ui/rsrc/WifiOptions.qml:397
 msgid "Error reloading configuration"
 msgstr ""
 
-#: ../lliurex-wifi-gva-control.install/ui/rsrc/WifiOptions.qml:434
+#: ../lliurex-wifi-gva-control.install/ui/rsrc/WifiOptions.qml:446
 msgid "Apply changes. Wait a moment..."
 msgstr ""
 
-#: ../lliurex-wifi-gva-control.install/ui/rsrc/WifiOptions.qml:447
+#: ../lliurex-wifi-gva-control.install/ui/rsrc/WifiOptions.qml:459
 msgid "Restoring previous values. Wait a moment..."
 msgstr ""
 

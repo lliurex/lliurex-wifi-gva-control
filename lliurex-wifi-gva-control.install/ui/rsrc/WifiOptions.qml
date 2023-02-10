@@ -33,14 +33,14 @@ Rectangle{
 
         GridLayout{
             id: optionsGrid
-            rows: 3
+            rows: 4
             flow: GridLayout.TopToBottom
             rowSpacing:5
             Layout.topMargin: messageLabel.visible?0:50
 
             CheckBox {
                 id:enableWifiCb
-                text:i18nd("lliurex-wifi-gva-control","Activate automatic connection to the Wifi. Default connection:")
+                text:i18nd("lliurex-wifi-gva-control","Activate automatic connection to the Wifi")
                 checked:wifiControlBridge.isWifiEnabled
                 font.pointSize: 10
                 focusPolicy: Qt.NoFocus
@@ -53,10 +53,18 @@ Rectangle{
                 Layout.alignment:Qt.AlignLeft
                 Layout.bottomMargin:5
             }
+            RowLayout{
+                Layout.fillWidth:true
+                Layout.leftMargin:26
+                Text{ 
+                    text:i18nd("lliurex-wifi-gva-control","Default connection:")
+                    font.pointSize: 10
+                }
+            }
             RowLayout {
                 Layout.fillWidth: true
                 Layout.alignment:Qt.AlignLeft
-                Layout.leftMargin:20
+                Layout.leftMargin:25
 
                 ButtonGroup{
                     buttons:wifiOptions.children
