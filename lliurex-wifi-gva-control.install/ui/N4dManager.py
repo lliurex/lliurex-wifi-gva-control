@@ -139,15 +139,16 @@ class N4dManager:
 			try:
 				if actionAutologin==0:
 					self.writeLog("- Action: Enable autologin")
-					ret=self.client.AlumnatAccountManager.enable_alumnat_user(currentPassword)
+					ret=self._checkIfAutologinIsEnabled()
+					if not ret:
+						ret=self.client.AlumnatAccountManager.enable_alumnat_user(currentPassword)
 				elif actionAutologin==1:
 					self.writeLog("- Action: Disable autologin")
 					ret=self.client.AlumnatAccountManager.disable_alumnat_user()
 				elif actionAutologin==2:
 					self.writeLog("- Action: Updated password")
-					isAutologinEnabled=self.client.AlumnatAccountManager.get_alumnat_status()['status']
-					print(isAutologinEnabled)
-					if isAutologinEnabled:
+					ret=self._checkIfAutologinIsEnabled()
+					if ret:
 						ret=self.client.AlumnatAccountManager.fix_alumnat_password(currentPassword)
 					else:
 						ret=self.client.AlumnatAccountManager.enable_alumnat_user(currentPassword)
@@ -169,6 +170,17 @@ class N4dManager:
 		return result
 
 	#def applyChanges
+
+	def _checkIfAutologinIsEnabled(self):
+
+		try:
+			ret=self.client.AlumnatAccountManager.get_alumnat_status()['status']
+		except:
+			ret=False
+
+		return ret
+
+	#def __checkIfAutologinIsEnabled
 
 	def writeLog(self,msg):
 

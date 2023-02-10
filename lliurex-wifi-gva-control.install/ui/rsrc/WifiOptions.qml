@@ -298,10 +298,14 @@ Rectangle{
             text:i18nd("lliurex-wifi-gva-control","Cancel")
             Layout.preferredHeight: 40
             enabled:{
-                if ((wifiControlBridge.settingsWifiChanged) && (!wifiControlBridge.errorInPassword)){
+                if (wifiControlBridge.errorInPassword){
                     true
                 }else{
-                    false
+                    if (wifiControlBridge.settingsWifiChanged){
+                        true
+                    }else{
+                        false
+                    }
                 }
             }
             Keys.onReturnPressed: cancelBtn.clicked()
