@@ -93,11 +93,21 @@ class LliurexWifiControl(QObject):
 			self.isWifiEnabled=copy.deepcopy(LliurexWifiControl.n4dMan.isWifiEnabled)
 			self.currentWifiOption=copy.deepcopy(LliurexWifiControl.n4dMan.currentWifiOption)
 			self.currentPassword=copy.deepcopy(LliurexWifiControl.n4dMan.currentPassword)
+			self.initialPassword=True
+			self.errorInPassword=False
+			self.passwordEntryEnabled=False
 			
 			if self.isWifiEnabled and self.currentWifiOption==3:
-				self.showEditPasswordBtn=True
+				if self.currentPassword=="":
+					self.passwordEntryEnabled=True
+					self.errorInPassword=True
+					self.initialPassword=False
+					self.showSettingsMessage=[True,LliurexWifiControl.n4dMan.ERROR_PASSWORD_EMPTY,"Error"]
+				else:
+					self.showEditPasswordBtn=True
+					self.showSettingsMessage=[False,"","Success"]
 			else:
-				self.passwordEntryEnabled=False
+				self.showSettingsMessage=[False,"","Success"]
 
 			self.currentStack=1
 		else:
@@ -363,14 +373,17 @@ class LliurexWifiControl(QObject):
 				self.showSettingsMessage=[True,LliurexWifiControl.n4dMan.ERROR_PASSWORDS_NOT_MATCH,"Error"]
 				self.errorInPassword=True
 			else:
-				self.showSettingsMessage=[False,"","Success"]
-				self.errorInPassword=False
-				if value[0]!=self.currentPassword:
-					self.currentPassword=value[0]
-					if self.currentPassword!=LliurexWifiControl.n4dMan.currentPassword:
-						self.changeInPassword=True
-				else:
-					self.changeInPassword=False
+				if value[0]!="":
+					self.showSettingsMessage=[False,"","Success"]
+					self.errorInPassword=False
+					if value[0]!=self.currentPassword:
+						self.currentPassword=value[0]
+						if self.currentPassword!=LliurexWifiControl.n4dMan.currentPassword:
+							self.changeInPassword=True
+						else:
+							self.changeInPassword=False
+					else:
+						self.changeInPassword=False
 				
 				self._manageChanges()
 	
@@ -391,7 +404,12 @@ class LliurexWifiControl(QObject):
 			else:
 				self.errorInPassword=True
 				self.showSettingsMessage=[True,LliurexWifiControl.n4dMan.ERROR_PASSWORD_EMPTY,"Error"]
-
+		else:
+			if value[0]=="":
+				if self.isWifiEnabled and self.currentWifiOption==3:
+					self.errorInPassword=True
+					self.showSettingsMessage=[True,LliurexWifiControl.n4dMan.ERROR_PASSWORD_EMPTY,"Error"]
+			
 		self.initialPassword=False
 
 	#def changeInPasswordEntry
@@ -442,6 +460,8 @@ class LliurexWifiControl(QObject):
 			else:
 				if self.currentPassword=="":
 					self.passwordEntryEnabled=True
+					self.errorInPassword=True
+					self.showSettingsMessage=[True,LliurexWifiControl.n4dMan.ERROR_PASSWORD_EMPTY,"Error"]
 				else:
 					self.showEditPasswordBtn=True
 
@@ -486,13 +506,16 @@ class LliurexWifiControl(QObject):
 
 		self._loadConfig()
 		self.settingsWifiChanged=False
-		self.initialPassword=True
+		#self.initialPassword=True
 		self.showConfirmPassword=False
-		self.passwordEntryEnabled=False
+		#self.passwordEntryEnabled=False
 		self.changeInPassword=False
-		self.errorInPassword=False
+		#self.errorInPassword=False
 		self.closePopUp=True
-		self.closeGui=True
+		if self.errorInPassword:
+			self.closeGui=False
+		else:
+			self.closeGui=True
 
 	#def _initForm	
 
@@ -501,8 +524,8 @@ class LliurexWifiControl(QObject):
 
 		self.closePopUp=False
 		self.showChangesDialog=False
-		self._initForm()
 		self.showSettingsMessage=[False,"","Success"]
+		self._initForm()
 
 	#def cancelChanges
 
