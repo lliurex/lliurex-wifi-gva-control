@@ -231,7 +231,7 @@ Rectangle{
                         echoMode:TextInput.Password
 
                         onTextChanged:{
-                            wifiControlBridge.managePassword([passwordValue.text,confirmPasswordValue.text])
+                            wifiControlBridge.changeInConfirmPasswordEntry([passwordValue.text,confirmPasswordValue.text])
                         }
                     }
 
