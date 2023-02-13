@@ -293,6 +293,7 @@ Rectangle{
             Keys.onEnterPressed: applyBtn.clicked()
             onClicked:{
                 applyChanges()
+                closeTimer.stop()
                 wifiControlBridge.applyChanges()
                 
             }
@@ -320,6 +321,7 @@ Rectangle{
             Keys.onEnterPressed: cancelBtn.clicked()
             onClicked:{
                 discardChanges()
+                closeTimer.stop()
                 wifiControlBridge.cancelChanges()
             }
         }
@@ -338,6 +340,9 @@ Rectangle{
             }
             function onDiscardDialogClicked(){
                 discardChanges()
+            }
+            function onCancelDialogClicked(){
+                closeTimer.stop()
             }
 
         }
