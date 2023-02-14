@@ -420,7 +420,7 @@ class LliurexWifiControl(QObject):
 	def editPasswordBtn(self):
 
 		if self.currentWifiOption==3:
-			self.passwordEntryEnabled=True
+			self.passwordEntryEnabled=not self.passwordEntryEnabled
 			self.initialPassword=False
 
 	#def editPasswordBtn
@@ -554,19 +554,19 @@ class LliurexWifiControl(QObject):
 	@Slot()
 	def openHelp(self):
 		
-		self.help_cmd='xdg-open https://wiki.edu.gva.es/lliurex/tiki-index.php?page=Lliurex-WIFI-GVA-Control'
+		self.helpCmd='xdg-open https://wiki.edu.gva.es/lliurex/tiki-index.php?page=Integración+con+las+WiFis+educativas+de+la+GVA'
 		
-		self.open_help_t=threading.Thread(target=self._openHelp)
-		self.open_help_t.daemon=True
-		self.open_help_t.start()
+		self.openHelpT=threading.Thread(target=self._openHelpRet)
+		self.openHelpT.daemon=True
+		self.openHelpT.start()
 
 	#def openHelp
 
-	def _openHelp(self):
+	def _openHelpRet(self):
 
-		os.system(self.help_cmd)
+		os.system(self.helpCmd)
 
-	#def _openHelp
+	#def _openHelpRet
 
 	@Slot()
 	def closeApplication(self):
