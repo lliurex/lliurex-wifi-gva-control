@@ -143,12 +143,12 @@ Rectangle{
                      Button {
                         id:showPasswdBtn
                         display:AbstractButton.IconOnly
-                        icon.name:"visibility.svg"
+                        icon.name:getConfiguration(passwordValue.echoMode,"iconName")
                         Layout.preferredHeight: 35
                         ToolTip.delay: 1000
                         ToolTip.timeout: 3000
                         ToolTip.visible: hovered
-                        ToolTip.text:i18nd("lliurex-wifi-gva-control","Click to show password")
+                        ToolTip.text:getConfiguration(passwordValue.echoMode,"toolTip")
                         visible:{
                             if ((enableWifiCb.checked) && (autoLoginOption.checked)){
                                 true
@@ -238,12 +238,12 @@ Rectangle{
                     Button {
                         id:showConfirmPasswdBtn
                         display:AbstractButton.IconOnly
-                        icon.name:"visibility.svg"
+                        icon.name:getConfiguration(confirmPasswordValue.echoMode,"iconName")
                         Layout.preferredHeight: 35
                         ToolTip.delay: 1000
                         ToolTip.timeout: 3000
                         ToolTip.visible: hovered
-                        ToolTip.text:i18nd("lliurex-wifi-gva-control","Click to show password")
+                        ToolTip.text:getConfiguration(confirmPasswordValue.echoMode,"toolTip")
                         hoverEnabled:true
                         enabled:{
                             if (confirmPasswordValue.text!=""){
@@ -444,6 +444,26 @@ Rectangle{
                     return false
                 }
         }
+    }
+
+    function getConfiguration(echoMode,type){
+
+        var msg=""
+        var icon=""
+        if (echoMode==0){
+            msg=i18nd("lliurex-wifi-gva-control","Click to hide password")
+            icon="view-hidden.svg"
+        }else{
+            msg=i18nd("lliurex-wifi-gva-control","Click to show password")
+            icon="visibility.svg" 
+        }
+
+        if (type=="toolTip"){
+            return msg
+        }else{
+            return icon
+        }
+
     }
 
     function applyChanges(){
