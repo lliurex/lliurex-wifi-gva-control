@@ -182,13 +182,23 @@ Rectangle{
                     Button {
                         id:editPasswdBtn
                         display:AbstractButton.IconOnly
-                        icon.name:"document-edit.svg"
+                        icon.name:{
+                            if (!wifiControlBridge.passwordEntryEnabled){
+                                "document-edit.svg"
+                            }else{
+                                "dialog-cancel.svg"
+                            }
+                        }
                         Layout.preferredHeight: 35
                         visible:wifiControlBridge.showEditPasswordBtn
                         enabled:{
                             if ((enableWifiCb.checked) && (autoLoginOption.checked)){
                                 if (wifiControlBridge.currentPassword!=""){
-                                    true
+                                    if (!wifiControlBridge.showConfirmPassword){
+                                        true
+                                    }else{
+                                        false
+                                    }
                                 }else{
                                     false
                                 }
@@ -199,7 +209,13 @@ Rectangle{
                         ToolTip.delay: 1000
                         ToolTip.timeout: 3000
                         ToolTip.visible: hovered
-                        ToolTip.text:i18nd("lliurex-wifi-gva-control","Click to change password")
+                        ToolTip.text:{
+                            if (!wifiControlBridge.passwordEntryEnabled){
+                                i18nd("lliurex-wifi-gva-control","Click to edit password")
+                            }else{
+                                i18nd("lliurex-wifi-gva-control","Click to cancel password editing")
+                            }
+                        }
                         hoverEnabled:true
                         onClicked:{
                             wifiControlBridge.editPasswordBtn()
