@@ -62,6 +62,7 @@ class N4dManager:
 			if self.wifiConfiguration in [0,1,2,3]:
 				if self.wifiConfiguration==0:
 					self.isWifiEnabled=False
+					self.currentWifiOption=2
 				else:
 					self.isWifiEnabled=True
 					self.currentWifiOption=self.wifiConfiguration
@@ -109,9 +110,9 @@ class N4dManager:
 				if self.currentAutologinStatus:
 					actionAutologin=1
 		
-		if currentWifiOption==3:
-			if currentPassword!=self.currentPassword:
-				changePassword=True
+		if currentPassword!=self.currentPassword:
+			changePassword=True
+			if currentWifiOption==3:
 				if actionAutologin==-1:
 					if self.currentAutologinStatus:
 						actionAutologin=2
@@ -131,7 +132,10 @@ class N4dManager:
 
 		if changePassword:
 			self.writeLog("Changes in autologin password:")
-			self.writeLog("- Action: Update password")
+			if currentPassword!="":
+				self.writeLog("- Action: Update password")
+			else:
+				self.writeLog("- Action: Clear password")
 			try:
 				ret=self.client.EscolesConectades.set_autologin(currentPassword)
 				self.writeLog("- Result: changes apply successful")
