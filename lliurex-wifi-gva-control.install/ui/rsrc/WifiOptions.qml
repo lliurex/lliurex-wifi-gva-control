@@ -48,6 +48,7 @@ Rectangle{
                 Keys.onEnterPressed: enableWifiCb.toggled()
                 onToggled:{
                    wifiControlBridge.manageWifiControl(checked)
+                   confirmPasswordValue.text=""
                 }
 
                 Layout.alignment:Qt.AlignLeft
@@ -76,7 +77,7 @@ Rectangle{
                     spacing:5
                     Layout.alignment:Qt.AlignTop
 
-                    RadioButton{
+                   RadioButton{
                         id:teacherOption
                         checked:getWifiOption(1)
                         enabled:enableWifiCb.checked?true:false
@@ -140,7 +141,7 @@ Rectangle{
                         }
                     }
 
-                     Button {
+                    Button {
                         id:showPasswdBtn
                         display:AbstractButton.IconOnly
                         icon.name:getConfiguration(passwordValue.echoMode,"iconName")
@@ -221,7 +222,23 @@ Rectangle{
                             wifiControlBridge.editPasswordBtn()
                         }
                     }
-                   
+
+                    Button {
+                        id:clearPasswdBtn
+                        display:AbstractButton.IconOnly
+                        icon.name:"edit-clear.svg"
+                        Layout.preferredHeight: 35
+                        visible:wifiControlBridge.showClearPasswordBtn
+                        enabled:true
+                        ToolTip.delay: 1000
+                        ToolTip.timeout: 3000
+                        ToolTip.visible: hovered
+                        ToolTip.text:i18nd("lliurex-wifi-gva-control","Click to clear password")
+                        hoverEnabled:true
+                        onClicked:{
+                            clearPasswordDialog.open()
+                        }
+                    }
                 }
                 
                 Text{
@@ -348,17 +365,43 @@ Rectangle{
         dialogTitle:"Lliurex Wifi GVA Control"+" - "+i18nd("lliurex-wifi-gva-control","Wifi configuration")
         dialogVisible:wifiControlBridge.showChangesDialog
         dialogMsg:i18nd("lliurex-wifi-gva-control","The are pending changes to apply.\nDo you want apply the changes or discard them?")
+        btnAcceptVisible:true
+        btnDiscardText:i18nd("lliurex-wifi-gva-control","Discard")
+        btnDiscardIcon:"delete.svg"
         Connections{
             target:wifiChangesDialog
             function onDialogApplyClicked(){
                 applyChanges()
-                
+                wifiControlBridge.manageChangesDialog("Accept")
             }
             function onDiscardDialogClicked(){
                 discardChanges()
+                wifiControlBridge.manageChangesDialog("Discard")
             }
             function onCancelDialogClicked(){
                 closeTimer.stop()
+                wifiControlBridge.manageChangesDialog("Cancel")
+            }
+
+        }
+    }
+
+    ChangesDialog{
+        id:clearPasswordDialog
+        dialogTitle:"Lliurex Wifi GVA Control"+" - "+i18nd("lliurex-wifi-gva-control","Wifi configuration")
+        dialogVisible:false
+        dialogMsg:i18nd("lliurex-wifi-gva-control","Do you want to delete the password for alumnat user?")
+        btnAcceptVisible:false
+        btnDiscardText:i18nd("lliurex-wifi-gva-control","Apply")
+        btnDiscardIcon:"dialog-ok.svg"
+        Connections{
+            target:clearPasswordDialog
+            function onDiscardDialogClicked(){
+                clearPasswordDialog.close()
+                wifiControlBridge.clearPassword()
+            }
+            function onCancelDialogClicked(){
+                clearPasswordDialog.close()
             }
 
         }

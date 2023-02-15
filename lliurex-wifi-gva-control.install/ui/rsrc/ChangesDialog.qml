@@ -9,6 +9,9 @@ Dialog {
     property alias dialogTitle:customDialog.title
     property alias dialogVisible:customDialog.visible
     property alias dialogMsg:dialogText.text
+    property alias btnAcceptVisible:dialogApplyBtn.visible
+    property alias btnDiscardText:dialogDiscardBtn.text
+    property alias btnDiscardIcon:dialogDiscardBtn.icon.name
     signal dialogApplyClicked
     signal discardDialogClicked
     signal cancelDialogClicked
@@ -19,7 +22,7 @@ Dialog {
 
     contentItem: Rectangle {
         color: "#ebeced"
-        implicitWidth: 400
+        implicitWidth: 420
         implicitHeight: 105
         anchors.topMargin:5
         anchors.leftMargin:5
@@ -52,6 +55,7 @@ Dialog {
                 display:AbstractButton.TextBesideIcon
                 icon.name:"dialog-ok.svg"
                 text: i18nd("lliurex-wifi-gva-control","Apply")
+                visible: btnAcceptVisible 
                 focus:true
                 font.family: "Quattrocento Sans Bold"
                 font.pointSize: 10
@@ -64,8 +68,8 @@ Dialog {
             Button {
                 id:dialogDiscardBtn
                 display:AbstractButton.TextBesideIcon
-                icon.name:"delete.svg"
-                text: i18nd("lliurex-wifi-gva-control","Discard")
+                icon.name:btnDiscardIcon
+                text:btnDiscardText
                 focus:true
                 font.family: "Quattrocento Sans Bold"
                 font.pointSize: 10
@@ -92,20 +96,14 @@ Dialog {
 
             onApplied:{
                 dialogApplyClicked()
-                wifiControlBridge.manageChangesDialog("Accept")
-
             }
 
             onDiscarded:{
-                discardDialogClicked(),
-                wifiControlBridge.manageChangesDialog("Discard")
-
+                discardDialogClicked()
             }
 
             onRejected:{
-                cancelDialogClicked(),
-                wifiControlBridge.manageChangesDialog("Cancel")
-
+                cancelDialogClicked()
             }
         }
     }
