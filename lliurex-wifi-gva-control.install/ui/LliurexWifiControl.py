@@ -417,8 +417,8 @@ class LliurexWifiControl(QObject):
 			
 		if matchError:
 			self.errorInPassword=True
-			self.showSettingsMessage=[True,LliurexWifiControl.n4dMan.ERROR_PASSWORD_EMPTY,"Error"]
-	
+			self.showSettingsMessage=[False,"","Success"]
+
 		self.initialPassword=False
 
 	#def changeInPasswordEntry
@@ -426,7 +426,11 @@ class LliurexWifiControl(QObject):
 	def _managePassword(self,value):
 
 		if value[0]!=value[1]:
-			self.showSettingsMessage=[True,LliurexWifiControl.n4dMan.ERROR_PASSWORDS_NOT_MATCH,"Error"]
+			if value[1]!="" and value[0]!="":
+				self.showSettingsMessage=[True,LliurexWifiControl.n4dMan.ERROR_PASSWORDS_NOT_MATCH,"Error"]
+			else:
+				self.showSettingsMessage=[False,"","Success"]
+			
 			self.errorInPassword=True
 		else:
 			if value[0]!="":
