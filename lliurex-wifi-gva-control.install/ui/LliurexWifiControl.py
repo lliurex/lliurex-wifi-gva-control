@@ -80,6 +80,7 @@ class LliurexWifiControl(QObject):
 		self.changeInOption=False
 		self.changeInPassword=False
 		self.initialPassword=True
+		self.passwordCleared=False
 		LliurexWifiControl.n4dMan.setServer(ticket)
 		self.gatherInfo=GatherInfo()
 		self.gatherInfo.start()
@@ -98,6 +99,7 @@ class LliurexWifiControl(QObject):
 			self.passwordEntryEnabled=False
 			self.showSettingsMessage=[False,"","Success"]
 			self.showClearPasswordBtn=False
+			self.passwordCleared=False
 
 			if self.isWifiEnabled and self.currentWifiOption==3:
 				if self.currentPassword=="":
@@ -121,8 +123,11 @@ class LliurexWifiControl(QObject):
 
 	def _manageClearPasswordBtn(self):
 
-		if self.currentWifiOption!=3 and self.currentPassword!="":
-			self.showClearPasswordBtn=True
+		if self.currentPassword!="":
+			if self.currentWifiOption!=3 or not self.isWifiEnabled:
+				self.showClearPasswordBtn=True
+			else:
+				self.showClearPasswordBtn=False
 		else:
 			self.showClearPasswordBtn=False
 
@@ -469,7 +474,7 @@ class LliurexWifiControl(QObject):
 				else:
 					self.settingsWifiChanged=False
 			else:
-				if self.changeInPassword and self.showClearPasswordBtn:
+				if self.changeInPassword and self.passwordCleared:
 					self.settingsWifiChanged=True
 				else:
 					self.settingsWifiChanged=False
@@ -479,7 +484,12 @@ class LliurexWifiControl(QObject):
 	def _undoChangesInPassword(self):
 
 		self.initialPassword=True
-		self.currentPassword=LliurexWifiControl.n4dMan.currentPassword
+
+		if not self.passwordCleared or self.currentWifiOption==3:
+			self.currentPassword=LliurexWifiControl.n4dMan.currentPassword
+			if self.passwordCleared:
+				self.passwordCleared=False
+
 		self.showSettingsMessage=[False,"","Success"]
 		self.initialPassword=False
 		self.changeInPassword=False
@@ -583,9 +593,12 @@ class LliurexWifiControl(QObject):
 	@Slot()
 	def clearPassword(self):
 
+		self.showSettingsMessage=[False,"","Success"]
 		self.initialPassword=True
 		self.currentPassword=""
 		self.changeInPassword=True
+		self.passwordCleared=True
+		self.showClearPasswordBtn=False
 		self._manageChanges()
 
 	#def clearPassword
