@@ -392,7 +392,7 @@ Rectangle{
         dialogVisible:false
         dialogMsg:i18nd("lliurex-wifi-gva-control","Do you want to delete the password for alumnat user?")
         btnAcceptVisible:false
-        btnDiscardText:i18nd("lliurex-wifi-gva-control","Apply")
+        btnDiscardText:i18nd("lliurex-wifi-gva-control","Accept")
         btnDiscardIcon:"dialog-ok.svg"
         Connections{
             target:clearPasswordDialog

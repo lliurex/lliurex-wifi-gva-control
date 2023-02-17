@@ -80,6 +80,7 @@ class LliurexWifiControl(QObject):
 		self.changeInOption=False
 		self.changeInPassword=False
 		self.initialPassword=True
+		self.passwordCleared=False
 		LliurexWifiControl.n4dMan.setServer(ticket)
 		self.gatherInfo=GatherInfo()
 		self.gatherInfo.start()
@@ -98,6 +99,7 @@ class LliurexWifiControl(QObject):
 			self.passwordEntryEnabled=False
 			self.showSettingsMessage=[False,"","Success"]
 			self.showClearPasswordBtn=False
+			self.passwordCleared=False
 
 			if self.isWifiEnabled and self.currentWifiOption==3:
 				if self.currentPassword=="":
@@ -121,8 +123,11 @@ class LliurexWifiControl(QObject):
 
 	def _manageClearPasswordBtn(self):
 
-		if self.currentWifiOption!=3 and self.currentPassword!="":
-			self.showClearPasswordBtn=True
+		if self.currentPassword!="":
+			if self.currentWifiOption!=3 or not self.isWifiEnabled:
+				self.showClearPasswordBtn=True
+			else:
+				self.showClearPasswordBtn=False
 		else:
 			self.showClearPasswordBtn=False
 
@@ -417,8 +422,8 @@ class LliurexWifiControl(QObject):
 			
 		if matchError:
 			self.errorInPassword=True
-			self.showSettingsMessage=[True,LliurexWifiControl.n4dMan.ERROR_PASSWORD_EMPTY,"Error"]
-	
+			self.showSettingsMessage=[False,"","Success"]
+
 		self.initialPassword=False
 
 	#def changeInPasswordEntry
@@ -426,7 +431,11 @@ class LliurexWifiControl(QObject):
 	def _managePassword(self,value):
 
 		if value[0]!=value[1]:
-			self.showSettingsMessage=[True,LliurexWifiControl.n4dMan.ERROR_PASSWORDS_NOT_MATCH,"Error"]
+			if value[1]!="" and value[0]!="":
+				self.showSettingsMessage=[True,LliurexWifiControl.n4dMan.ERROR_PASSWORDS_NOT_MATCH,"Error"]
+			else:
+				self.showSettingsMessage=[False,"","Success"]
+			
 			self.errorInPassword=True
 		else:
 			if value[0]!="":
@@ -465,7 +474,7 @@ class LliurexWifiControl(QObject):
 				else:
 					self.settingsWifiChanged=False
 			else:
-				if self.changeInPassword and self.showClearPasswordBtn:
+				if self.changeInPassword and self.passwordCleared:
 					self.settingsWifiChanged=True
 				else:
 					self.settingsWifiChanged=False
@@ -475,7 +484,12 @@ class LliurexWifiControl(QObject):
 	def _undoChangesInPassword(self):
 
 		self.initialPassword=True
-		self.currentPassword=LliurexWifiControl.n4dMan.currentPassword
+
+		if not self.passwordCleared or self.currentWifiOption==3:
+			self.currentPassword=LliurexWifiControl.n4dMan.currentPassword
+			if self.passwordCleared:
+				self.passwordCleared=False
+
 		self.showSettingsMessage=[False,"","Success"]
 		self.initialPassword=False
 		self.changeInPassword=False
@@ -579,9 +593,12 @@ class LliurexWifiControl(QObject):
 	@Slot()
 	def clearPassword(self):
 
+		self.showSettingsMessage=[False,"","Success"]
 		self.initialPassword=True
 		self.currentPassword=""
 		self.changeInPassword=True
+		self.passwordCleared=True
+		self.showClearPasswordBtn=False
 		self._manageChanges()
 
 	#def clearPassword
