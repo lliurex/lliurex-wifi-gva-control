@@ -150,13 +150,13 @@ class N4dManager:
 			try:
 				if actionAutologin==0:
 					self.writeLog("- Action: Enable autologin")
-					ret=self.client.AlumnatAccountManager.enable_alumnat_user(currentPassword)
+					ret=self.client.AlumnatAccountManager.enable_alumnat_user()
 				elif actionAutologin==1:
 					self.writeLog("- Action: Disable autologin")
 					ret=self.client.AlumnatAccountManager.disable_alumnat_user()
 				elif actionAutologin==2:
 					self.writeLog("- Action: Updated password")
-					ret=self.client.AlumnatAccountManager.fix_alumnat_password(currentPassword)
+					ret=self.client.AlumnatAccountManager.fix_alumnat_password()
 				
 				self.writeLog("- Result: Changes apply successful")
 			
