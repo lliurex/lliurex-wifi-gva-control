@@ -1,3 +1,10 @@
+lliurex-wifi-gva-control (1.3) focal; urgency=medium
+
+  * Renamed call to n4d plugin to get/set wifi configuration
+  * Fixed depends
+  
+ -- Juan Ramon Pelegrina <juapesai@hotmail.com>  Wed, 22 Feb 2023 11:15:07 +0100
+
 lliurex-wifi-gva-control (1.2) focal; urgency=medium
 
   * Fixed functions to create alumnat user
