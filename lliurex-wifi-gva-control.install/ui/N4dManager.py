@@ -55,8 +55,8 @@ class N4dManager:
 
 		try:
 			self.writeLog("Wifi Control. %s configuration:"%step)
-			self.wifiConfiguration=self.client.EscolesConectades.get_settings()
-			wifiPassword=self.client.EscolesConectades.get_autologin()
+			self.wifiConfiguration=self.client.WifiEduGva.get_settings()
+			wifiPassword=self.client.WifiEduGva.get_autologin()
 			self.currentAutologinStatus=self._checkIfAutologinIsEnabled()
 
 			if self.wifiConfiguration in [0,1,2,3]:
@@ -123,7 +123,7 @@ class N4dManager:
 			self.writeLog("Changes in wifi configuration:")
 			self.writeLog("- Action: Changed Wifi Option to: %s"%(str(currentWifiOption)))
 			try:
-				ret=self.client.EscolesConectades.set_settings(currentWifiOption)
+				ret=self.client.WifiEduGva.set_settings(currentWifiOption)
 				self.writeLog("- Result: Changes apply successful")
 			except Exception as e:
 				self.writeLog("- Result: Error applying changes: %s"%str(e))
@@ -137,7 +137,7 @@ class N4dManager:
 			else:
 				self.writeLog("- Action: Clear password")
 			try:
-				ret=self.client.EscolesConectades.set_autologin(currentPassword)
+				ret=self.client.WifiEduGva.set_autologin(currentPassword)
 				self.writeLog("- Result: changes apply successful")
 			except Exception as e:
 				self.writeLog("- Result: Error applying changes: %s"%str(e))
