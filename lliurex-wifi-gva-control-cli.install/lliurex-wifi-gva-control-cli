@@ -1,0 +1,26 @@
+have lliurex-wifi-gva-control-cli &&
+_lliurex-wifi-gva-control-cli()
+{
+    local cur prev opts base
+    COMPREPLY=()
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    prev="${COMP_WORDS[COMP_CWORD-1]}"
+
+    #
+    #  The basic options we'll complete.
+    #
+    opts="currentconfig enablewifi disablewifi showalumnatpassword updatealumnatpassword removealumnatpassword help"
+
+    case "${prev}" in 
+        enablewifi)
+            local running="WIFI_PROF WIFI_ALU AUTOLOGIN"
+            COMPREPLY=( $(compgen -W "${running}" -- ${cur}) )
+            return 0
+            ;;
+        *)
+           COMPREPLY=($(compgen -W "${opts}" -- ${cur}))  
+           return 0
+           ;;
+    esac
+}
+[ "$have" ] && complete -F _lliurex-wifi-gva-control-cli lliurex-wifi-gva-control-cli
