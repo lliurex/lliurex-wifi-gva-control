@@ -64,7 +64,7 @@ class WifiGvaControlCliManager(object):
 		if self.isWifiConnectionEnabled:
 			defaultConnection=self._mappingWifiOption(self.currentWifiConnection,"IntToText")
 			print('      - Default option for Wifi Connection: %s'%(defaultConnection))
-		print('      - Password for user alumnat configured: %s'%str(self.isAlumnatPasswordConfigured))
+		print('      - Password for alumnat user configured: %s'%str(self.isAlumnatPasswordConfigured))
 
 		return 0
 	
@@ -107,7 +107,7 @@ class WifiGvaControlCliManager(object):
 						self.writeLog("Changes in configuration of Wifi GVA:")
 						self.writeLog("- Action: activate Wifi connection with option: %s"%wifiValue)
 						self.createClient()
-						ret=ret=self.n4dClient.WifiEduGva.set_settings(wifiValue)
+						ret=self.n4dClient.WifiEduGva.set_settings(wifiValue)
 						self.writeLog("- Result: Changes apply successful")
 
 						if wifiValue!=3:
@@ -117,7 +117,7 @@ class WifiGvaControlCliManager(object):
 								self.writeLog("- Result: Changes apply successful")
 						else:
 							if not self.isAlumnatPasswordConfigured:
-								self.writeLog("- Action: set password for user alumnat")
+								self.writeLog("- Action: set password for alumnat user")
 								ret=self.n4dClient.WifiEduGva.set_autologin(password)
 								self.writeLog("- Result: Changes apply successful")
 
@@ -132,7 +132,7 @@ class WifiGvaControlCliManager(object):
 
 					except n4d.client.CallFailedError as e:
 						self.writeLog("- Error applying changes: %s"%e.code)
-						print('   [Wifi-GVA-Control]: Error. Unable to disable wifi connection')
+						print('   [Wifi-GVA-Control]: Error. Unable to enable Wifi connection')
 						return 1
 				else:
 					print('   [Wifi-GVA-Control]: Action canceled')
@@ -156,7 +156,7 @@ class WifiGvaControlCliManager(object):
 					self.writeLog("Changes in configuration of Wifi GVA:")
 					self.writeLog("- Action: disable Wifi connection")
 					self.createClient()
-					ret=ret=self.n4dClient.WifiEduGva.set_settings(0)
+					ret=self.n4dClient.WifiEduGva.set_settings(0)
 					self.writeLog("- Result: Changes apply successful")
 	
 					if self.isAutologinConfigured:
@@ -170,7 +170,7 @@ class WifiGvaControlCliManager(object):
 
 				except n4d.client.CallFailedError as e:
 					self.writeLog("- Error applying changes: %s"%e.code)
-					print('   [Wifi-GVA-Control]: Error. Unable to disable wifi connection')
+					print('   [Wifi-GVA-Control]: Error. Unable to disable Wifi connection')
 					return 1
 			else:
 				print('   [Wifi-GVA-Control]: Action canceled')
@@ -188,7 +188,7 @@ class WifiGvaControlCliManager(object):
 		else:
 			if password!=self.currentAlumnatPassword:
 				if not self.unattendedMode:
-					response=input('   [Wifi-GVA-Control]: Do you want to set the password for the user alumnat? (yes/no)): ').lower()
+					response=input('   [Wifi-GVA-Control]: Do you want to update the password of the alumnat user? (yes/no)): ').lower()
 				else:
 					response='yes'
 					
@@ -204,6 +204,7 @@ class WifiGvaControlCliManager(object):
 
 					except n4d.client.CallFailedError as e:
 						self.writeLog("- Error applying changes: %s"%e.code)
+						print('   [Wifi-GVA-Control]: Error. Unable to update password of alumnat user')
 						return 1
 				else:
 					print('   [Wifi-GVA-Control]: Action canceled')
@@ -219,7 +220,7 @@ class WifiGvaControlCliManager(object):
 		if self.isAlumnatPasswordConfigured:
 			if self.currentWifiConnection!=3:
 				if not self.unattendedMode:
-					response=input('   [Wifi-GVA-Control]: Do you want to remove the password for the user alumnat? (yes/no)): ').lower()
+					response=input('   [Wifi-GVA-Control]: Do you want to remove the password of alumnat user alumnat? (yes/no)): ').lower()
 				else:
 					response='yes'
 
@@ -236,12 +237,13 @@ class WifiGvaControlCliManager(object):
 
 					except n4d.client.CallFailedError as e:
 						self.writeLog("- Error applying changes: %s"%e.code)
+						print('   [Wifi-GVA-Control]: Error. Unable to remove password of alumnat user')
 						return 1
 			else:
-				print('   [Wifi-GVA-Control]: Password for user alumnat cannot be deleted because the AUTOLOGIN option is activated')
+				print('   [Wifi-GVA-Control]: Password for alumnat user cannot be deleted because the AUTOLOGIN option is activated')
 				return 0
 		else:
-			print('   [Wifi-GVA-Control]: Password for user alumnat already removed. Nothing to do')
+			print('   [Wifi-GVA-Control]: Password for alumnat user already removed. Nothing to do')
 			return 0
 
 	#de removeAlumnatPassword
@@ -249,7 +251,7 @@ class WifiGvaControlCliManager(object):
 	def n4dUpdatePassword(self,password):
 
 		if self.currentUser!="":
-			print('   [Wifi-GVA-Control]: Option valid only for scheduled password changes')
+			print('   [Wifi-GVA-Control]: Option valid only for schedled password changes')
 			return 0
 		else:
 			if self.isAlumnatPasswordConfigured:
@@ -266,11 +268,12 @@ class WifiGvaControlCliManager(object):
 
 				except n4d.client.CallFailedError as e:
 					self.writeLog("- Error applying changes: %s"%e.code)
+					print('   [Wifi-GVA-Control]: Error. Unable to update password of alumnat user')
 					return 1
 			else:
 				return 0
 
-	#def n4dPasswordUpdate
+	#def n4dUpdatePassword
 
 	def _getInfo(self,step="Initial"):
 
@@ -305,7 +308,7 @@ class WifiGvaControlCliManager(object):
 				self.currentAlumnatPassword=wifiPassword
 
 			self.writeLog("- Current Wifi Option: %s"%(wifiConfiguration))
-			self.writeLog("- Password for user alumnat configured: %s"%(str(self.isAlumnatPasswordConfigured)))
+			self.writeLog("- Password for alumnat user configured: %s"%(str(self.isAlumnatPasswordConfigured)))
 			
 			return True
 
@@ -350,11 +353,12 @@ class WifiGvaControlCliManager(object):
 	def _checkPassword(self,password,confirmPassword):
 
 		error=False
+
 		if password=="" or password==None:
-			print('   [Wifi-GVA-Control]: No password has been indicated for the user alumnat')
+			print('   [Wifi-GVA-Control]: No password has been indicated for the alumnat user')
 			error=True
 		elif password!=confirmPassword:
-			print('   [Wifi-GVA-Control]: The given passwords for the user alumnat do not match')
+			print('   [Wifi-GVA-Control]: The given passwords for the alumnat user do not match')
 			error=True
 
 		return error
@@ -409,8 +413,7 @@ class WifiGvaControlCliManager(object):
 
 	#def writeLog
 
-
-#class AccessControlCliManager	
+#class WifiGvaControlCliManager	
 
 
 
