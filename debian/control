@@ -11,5 +11,13 @@ Vcs-Git: https://github.com/lliurex/lliurex-wifi-gva-control
 Package: lliurex-wifi-gva-control
 Architecture: amd64
 Depends: ${shlibs:Depends}, ${misc:Depends}, python3, n4d-wifiedugva, n4d-alumnatmanager, n4d-qt-agent, python3-n4d-client, python3-pyside2.qtqml, python3-pyside2.qtquick, python3-pyside2.qtgui, python3-pyside2.qtwidgets, python3-pyside2.qtquickwidgets
+Recommends:lliurex-wifi-gva-control-cli
 Description: App to manage wifi gva
  This package provides a gui to manage educational wifi gva in the computer
+
+Package: lliurex-wifi-gva-control-cli
+Architecture: amd64
+Depends: ${shlibs:Depends},n4d-wifiedugva, n4d-alumnatmanager, python3, python3-n4d-client, python3-clint
+Description: CLI to manage wifi gva connection in computer
+ This package provides a cli to manage the configuration of wifi gva in computer
+
