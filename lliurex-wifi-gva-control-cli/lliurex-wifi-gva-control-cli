@@ -1,0 +1,93 @@
+#! /usr/bin/python3
+import sys
+import os
+
+from clint import arguments
+from clint.textui import puts, indent, colored
+
+from wifigvacontrolcli import WifiGvaControlCliManager
+
+def usage():
+	puts("Usage")
+	with indent(4):
+		puts("lliurex-wifi-gva-control-cli [FLAGS...] ACTION")
+		puts("Actions")
+		with indent(4):	
+			puts("currentconfig: Shows information about current Wifi GVA configuration")
+			puts("enablewifi WIFI_PRO|WIFI_ALU|AUTOLOGIN <PASSWORD> <CONFIRM_PASSWORD>: Activate the automatic connection to the indicated Wifi GVA. For AUTOLOGIN option if may be necessary to enter password for user alumnat if it is not configured")
+			puts("disablewifi: Disable automatic connection to the Wifi GVA")
+			puts("showalumnatpassword: Show current password for alumnat user")
+			puts("updatealumnatpassword <PASSWORD> <CONFIRM_PASSWORD>: update the password for alumnat user")
+			puts("removealumnatpassword: delete the password for user alumnat")
+			puts("n4dupdatepassword <ENCODED_PASSWORD: option to update the password for alumnat user with n4d-oneshot. Option valid only for scheduled password changes")
+		puts("Flags")
+		with indent(4):
+			puts("-h --help : Show help")
+			puts("-u --unattended: Run the actions without prompting for user confirmation")
+	sys.exit(1)
+
+#def usage	
+		
+if __name__ == '__main__':
+
+	if os.geteuid() != 0:
+		print("   [Wifi-GVA-Control]: You need be root!")
+		sys.exit(1)
+
+	args = arguments.Args().copy
+	mode=False
+	debug=False
+	wifiOption="WIFI_ALU"
+	password=""
+	confirmPassword=""
+
+	if args.contains(["-h","--help"]) or len(args.all) == 0 :
+		usage()		
+	if args.contains(["-u","--unattended"]):
+		mode=True
+		index = args.first(["-u","--unattended"])
+		args.pop(index)
+
+	action = args.pop(0)
+	
+	if action=="enablewifi":
+		if len(args)>0:
+			wifiOption=args.all[0]
+			try:
+				password=args.all[1]
+				confirmPassword=args.all[2]
+			except:
+				pass
+	elif action=="updatealumnatpassword":
+		if len(args)>0:
+			password=args.all[0]
+			try:
+				confirmPassword=args.all[1]
+			except:
+				usage()
+		else:
+			usage()
+	elif action=="n4dupdatepassword":
+		if len(args)>0:
+			password=args.all[0]
+		else:
+			usage()
+
+	wc=WifiGvaControlCliManager(mode)
+	
+	if action == "currentconfig":
+		sys.exit(wc.showCurrentConfig())
+	elif action=="enablewifi":
+		sys.exit(wc.enableWifi(wifiOption,password,confirmPassword))
+	elif action=="disablewifi":
+		sys.exit(wc.disableWifi())
+	elif action=="showalumnatpassword":
+		sys.exit(wc.showAlumnatPassword())
+	elif action=="updatealumnatpassword":
+		sys.exit(wc.updateAlumnatPassword(password,confirmPassword))
+	elif action=="removealumnatpassword":
+		sys.exit(wc.removeAlumnatPassword())
+	elif action=="n4dupdatepassword":
+		sys.exit(wc.n4dUpdatePassword(password))
+	else:
+		usage()		
