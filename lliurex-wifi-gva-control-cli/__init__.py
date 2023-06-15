@@ -210,7 +210,7 @@ class WifiGvaControlCliManager(object):
 					print('   [Wifi-GVA-Control]: Action canceled')
 					return 0
 			else:
-				print('   [Wifi-GVA-Control]: Password for user alumnat already exists. Nothing to do')
+				print('   [Wifi-GVA-Control]: Password of alumnat user already exists. Nothing to do')
 				return 0
 	
 	#def updateAlumnatPassword
@@ -220,7 +220,7 @@ class WifiGvaControlCliManager(object):
 		if self.isAlumnatPasswordConfigured:
 			if self.currentWifiConnection!=3:
 				if not self.unattendedMode:
-					response=input('   [Wifi-GVA-Control]: Do you want to remove the password of alumnat user alumnat? (yes/no)): ').lower()
+					response=input('   [Wifi-GVA-Control]: Do you want to remove the password of alumnat user? (yes/no)): ').lower()
 				else:
 					response='yes'
 
