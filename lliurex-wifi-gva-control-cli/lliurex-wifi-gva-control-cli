@@ -14,7 +14,7 @@ def usage():
 		puts("Actions")
 		with indent(4):	
 			puts("currentconfig: Shows information about current Wifi GVA configuration")
-			puts("enablewifi WIFI_PRO|WIFI_ALU|AUTOLOGIN <PASSWORD> <CONFIRM_PASSWORD>: Activate the automatic connection to the indicated Wifi GVA. For AUTOLOGIN option if may be necessary to enter password for user alumnat if it is not configured")
+			puts("enablewifi WIFI_PRO|WIFI_ALU|ALUMNAT <PASSWORD> <CONFIRM_PASSWORD>: Activate the automatic connection to the indicated Wifi GVA. For ALUMNAT option if may be necessary to enter password for alumnat user if it is not configured")
 			puts("disablewifi: Disable automatic connection to the Wifi GVA")
 			puts("showalumnatpassword: Show current password for alumnat user")
 			puts("updatealumnatpassword <PASSWORD> <CONFIRM_PASSWORD>: update the password for alumnat user")
