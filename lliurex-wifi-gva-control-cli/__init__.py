@@ -325,7 +325,7 @@ class WifiGvaControlCliManager(object):
 				return 1
 			elif wifiOption=="WIFI_ALU":
 				return 2
-			elif wifiOption=="AUTOLOGIN":
+			elif wifiOption=="ALUMNAT":
 				return 3
 			else:
 				return -1
@@ -335,7 +335,7 @@ class WifiGvaControlCliManager(object):
 			elif wifiOption==2:
 				return "WIFI_ALU"
 			elif wifiOption==3:
-				return "AUTOLOGIN"
+				return "ALUMNAT"
 
 	#def _mappingWifiOption
 
