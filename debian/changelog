@@ -1,3 +1,9 @@
+lliurex-wifi-gva-control (1.5.2) focal; urgency=medium
+
+  * Renamed CLI option: AUTOLOGIN by ALUMNAT.
+  
+ -- Juan Ramon Pelegrina <juapesai@hotmail.com>  Mon, 19 Jun 2023 09:48:46 +0200
+
 lliurex-wifi-gva-control (1.5.1) focal; urgency=medium
 
   * Fixed some text in CLI
