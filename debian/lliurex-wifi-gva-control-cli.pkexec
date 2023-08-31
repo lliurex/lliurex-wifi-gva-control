@@ -1,0 +1,26 @@
+[
+    {
+        "prefix": "net.lliurex.lliurex-wifi-gva-control-cli",
+        "cmd": "/usr/sbin/lliurex-wifi-gva-control-cli",
+        "nameaction": "cli",
+        "icon": "lliurex-wifi-gva-control",
+        "default_auth": {
+            "any": "no",
+            "inactive": "no",
+            "active": "no"
+        },
+        "auths": [
+            {
+                "type": "group",
+                "members": [
+                    "sudo",
+                    "admins"
+                ],
+                "any": "yes",
+                "inactive": "yes",
+                "active": "yes"
+            }
+        ],
+        "requiredx":"false"
+    }
+]

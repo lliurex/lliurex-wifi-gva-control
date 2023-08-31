@@ -1,0 +1,4 @@
+lliurex-wifi-gva-control.install/ui/* /usr/share/lliurex-wifi-gva-control/
+lliurex-wifi-gva-control.install/launcher/* /usr/sbin
+lliurex-wifi-gva-control.install/logrotate.d/* /etc/logrotate.d/
+lliurex-wifi-gva-control.install/rsyslog.d/* /etc/rsyslog.d/
