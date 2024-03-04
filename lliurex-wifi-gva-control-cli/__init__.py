@@ -18,7 +18,7 @@ class WifiGvaControlCliManager(object):
 	def __init__(self,mode):
 		
 		self.isWifiConnectionEnabled=False
-		self.currentWifiConnection=2
+		self.currentWifiConnection=-1
 		self.isAlumnatPasswordConfigured=False
 		self.currentAlumnatPassword=None
 		self.currentUser=""
@@ -294,7 +294,7 @@ class WifiGvaControlCliManager(object):
 			if wifiConfiguration in [0,1,2,3]:
 				if wifiConfiguration==0:
 					self.isWifiConnectionEnabled=False
-					self.currentWifiConnection=2
+					self.currentWifiConnection=-1
 				else:
 					self.isWifiConnectionEnabled=True
 					self.currentWifiConnection=wifiConfiguration
