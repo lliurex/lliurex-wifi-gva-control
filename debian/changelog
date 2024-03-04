@@ -1,3 +1,9 @@
+lliurex-wifi-gva-control (1.15.3) jammy; urgency=medium
+
+  * Fixed bug in cli when try to enable WIFI with WIFI_ALU
+  
+ -- Juan Ramon Pelegrina <juapesai@hotmail.com>  Mon, 04 Mar 2024 10:42:47 +0100
+
 lliurex-wifi-gva-control (1.15.2) jammy; urgency=medium
 
   * Initial release for Jammy
