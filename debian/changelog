@@ -1,3 +1,9 @@
+lliurex-wifi-gva-control (1.5.3) focal; urgency=medium
+
+  * Fixed bug when try to enable WIFI with WIFI-ALU
+  
+ -- Juan Ramon Pelegrina <juapesai@hotmail.com>  Mon, 04 Mar 2024 10:31:35 +0100
+
 lliurex-wifi-gva-control (1.5.2) focal; urgency=medium
 
   * Renamed CLI option: AUTOLOGIN by ALUMNAT.
