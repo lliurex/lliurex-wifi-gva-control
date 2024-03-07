@@ -316,7 +316,6 @@ class WifiGvaControlCliManager(object):
 
 			self.isCDCIntegrationEnabled=self.getIntegrationCDCStatus()
 
-			print(self.isCDCIntegrationEnabled)
 			self.writeLog("- Current Wifi Option: %s"%(wifiConfiguration))
 			self.writeLog("- Password for alumnat user configured: %s"%(str(self.isAlumnatPasswordConfigured)))
 
