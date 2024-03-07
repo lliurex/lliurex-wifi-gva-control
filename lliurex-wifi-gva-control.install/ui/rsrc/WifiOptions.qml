@@ -367,7 +367,10 @@ Rectangle{
         dialogMsg:i18nd("lliurex-wifi-gva-control","The are pending changes to apply.\nDo you want apply the changes or discard them?")
         btnAcceptVisible:true
         btnDiscardText:i18nd("lliurex-wifi-gva-control","Discard")
+        btnDiscardVisible:true
         btnDiscardIcon:"delete.svg"
+        btnCancelText:i18nd("lliurex-wifi-gva-control","Cancel")
+        btnCancelIcon:"dialog-cancel.svg"
         Connections{
             target:wifiChangesDialog
             function onDialogApplyClicked(){
@@ -392,8 +395,11 @@ Rectangle{
         dialogVisible:false
         dialogMsg:i18nd("lliurex-wifi-gva-control","Do you want to delete the password for alumnat user?")
         btnAcceptVisible:false
+        btnDiscardVisible:true
         btnDiscardText:i18nd("lliurex-wifi-gva-control","Accept")
         btnDiscardIcon:"dialog-ok.svg"
+        btnCancelText:i18nd("lliurex-wifi-gva-control","Cancel")
+        btnCancelIcon:"dialog-cancel.svg"
         Connections{
             target:clearPasswordDialog
             function onDiscardDialogClicked(){
@@ -402,6 +408,23 @@ Rectangle{
             }
             function onCancelDialogClicked(){
                 clearPasswordDialog.close()
+            }
+
+        }
+    }
+    ChangesDialog{
+        id:cdcWarning
+        dialogTitle:"Lliurex Wifi GVA Control"+" - "+i18nd("lliurex-wifi-gva-control","Wifi configuration")
+        dialogVisible:wifiControlBridge.showCDCWarning
+        dialogMsg:i18nd("lliurex-wifi-gva-control","It is necessary to activate the integration with CDC to be able to log in with WIFI GVA")
+        btnAcceptVisible:false
+        btnDiscardVisible:false
+        btnCancelText:i18nd("lliurex-wifi-gva-control","Close")
+        btnCancelIcon:"dialog-close.svg"
+        Connections{
+            target:cdcWarning
+            function onCancelDialogClicked(){
+                wifiControlBridge.manageCDCWarning()
             }
 
         }
@@ -440,6 +463,9 @@ Rectangle{
             case 10:
                 msg=i18nd("lliurex-wifi-gva-control","Changes applied successfully");
                 break;
+            case 20:
+                msg=i18nd("lliurex-wifi-gva-control","It is necessary to activate the integration with CDC to be able to log in with WIFI GVA")
+                break;
             case -10:
                 msg=i18nd("lliurex-wifi-gva-control","Error changing WIFI settings")
                 break;
@@ -476,6 +502,8 @@ Rectangle{
                 return Kirigami.MessageType.Positive
             case "Error":
                 return Kirigami.MessageType.Error
+            case "Warning":
+                return Kirigami.MessageType.Warning
         }
 
     } 
