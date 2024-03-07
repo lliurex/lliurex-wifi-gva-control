@@ -10,8 +10,11 @@ Dialog {
     property alias dialogVisible:customDialog.visible
     property alias dialogMsg:dialogText.text
     property alias btnAcceptVisible:dialogApplyBtn.visible
+    property alias btnDiscardVisible:dialogDiscardBtn.visible
     property alias btnDiscardText:dialogDiscardBtn.text
     property alias btnDiscardIcon:dialogDiscardBtn.icon.name
+    property alias btnCancelText:dialogCancelBtn.text
+    property alias btnCancelIcon:dialogCancelBtn.icon.name
     signal dialogApplyClicked
     signal discardDialogClicked
     signal cancelDialogClicked
@@ -38,6 +41,8 @@ Dialog {
             text:dialogMsg
             font.family: "Quattrocento Sans Bold"
             font.pointSize: 10
+            width:330
+            wrapMode:Text.WordWrap
             anchors.left:dialogIcon.right
             anchors.verticalCenter:dialogIcon.verticalCenter
             anchors.leftMargin:10
@@ -70,6 +75,7 @@ Dialog {
                 display:AbstractButton.TextBesideIcon
                 icon.name:btnDiscardIcon
                 text:btnDiscardText
+                visible:btnDiscardVisible
                 focus:true
                 font.family: "Quattrocento Sans Bold"
                 font.pointSize: 10
@@ -83,8 +89,8 @@ Dialog {
             Button {
                 id:dialogCancelBtn
                 display:AbstractButton.TextBesideIcon
-                icon.name:"dialog-cancel.svg"
-                text: i18nd("lliurex-wifi-gva-control","Cancel")
+                icon.name:btnCancelIcon
+                text:btnCancelText 
                 focus:true
                 font.family: "Quattrocento Sans Bold"
                 font.pointSize: 10

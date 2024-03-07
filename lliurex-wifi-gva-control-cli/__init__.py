@@ -21,6 +21,7 @@ class WifiGvaControlCliManager(object):
 		self.currentWifiConnection=-1
 		self.isAlumnatPasswordConfigured=False
 		self.currentAlumnatPassword=None
+		self.isCDCIntegrationEnabled=False
 		self.currentUser=""
 		self.unattendedMode=mode
 		self.n4dClient=n4d.client.Client()
@@ -65,6 +66,10 @@ class WifiGvaControlCliManager(object):
 			defaultConnection=self._mappingWifiOption(self.currentWifiConnection,"IntToText")
 			print('      - Default option for Wifi Connection: %s'%(defaultConnection))
 		print('      - Password for alumnat user configured: %s'%str(self.isAlumnatPasswordConfigured))
+
+		if self.isWifiConnectionEnabled and self.currentWifiConnection!=3:
+			if not self.isCDCIntegrationEnabled:
+				print('   [Wifi-GVA-Control]: WARNING It is necessary to activate the integration with CDC to be able to log in with WIFI GVA')
 
 		return 0
 	
@@ -128,6 +133,8 @@ class WifiGvaControlCliManager(object):
 							
 						print('   [Wifi-GVA-Control]: Action completed successfull')
 						self._getInfo("End")
+						if wifiValue!=3 and not self.isCDCIntegrationEnabled:
+							print('   [Wifi-GVA-Control]: WARNING It is necessary to activate the integration with CDC to be able to log in with WIFI GVA')
 						return 0
 
 					except n4d.client.CallFailedError as e:
@@ -307,9 +314,12 @@ class WifiGvaControlCliManager(object):
 				self.isAlumnatPasswordConfigured=True
 				self.currentAlumnatPassword=wifiPassword
 
+			self.isCDCIntegrationEnabled=self.getIntegrationCDCStatus()
+
+			print(self.isCDCIntegrationEnabled)
 			self.writeLog("- Current Wifi Option: %s"%(wifiConfiguration))
 			self.writeLog("- Password for alumnat user configured: %s"%(str(self.isAlumnatPasswordConfigured)))
-			
+
 			return True
 
 		except Exception as e:
@@ -405,6 +415,20 @@ class WifiGvaControlCliManager(object):
 		self.writeLog("Unattended Mode:%s"%(str(self.unattendedMode)))
 
 	#def _getCurrentUser
+
+	def getIntegrationCDCStatus(self):
+
+		cmd="cdccli -t"
+		p=subprocess.Popen(cmd,shell=True,stdout=subprocess.PIPE)
+		poutput=p.communicate()
+		rc=p.returncode
+		
+		if rc==0:
+			return True
+		else:
+			return False
+
+	#def getIntegrationCDCStatus
 
 	def writeLog(self,msg):
 

@@ -76,6 +76,7 @@ class LliurexWifiControl(QObject):
 		self._errorInPassword=False
 		self._showSpinner=True
 		self._showClearPasswordBtn=False
+		self._showCDCWarning=False
 		self.changeInActivation=False
 		self.changeInOption=False
 		self.changeInPassword=False
@@ -110,6 +111,9 @@ class LliurexWifiControl(QObject):
 				else:
 					self.showEditPasswordBtn=True
 			else:
+				if self.isWifiEnabled and not LliurexWifiControl.n4dMan.getIntegrationCDCStatus():
+					self.showSettingsMessage=[True,LliurexWifiControl.n4dMan.WARNING_CDC_ACTIVATION_REQUIRED,"Warning"]
+
 				self._manageClearPasswordBtn()
 
 			self.currentStack=1
@@ -357,6 +361,20 @@ class LliurexWifiControl(QObject):
 
 	#def _setCloseGui
 
+	def _getShowCDCWarning(self):
+
+		return self._showCDCWarning
+
+	#def _getShowCDCWarning
+
+	def _setShowCDCWarning(self,showCDCWarning):
+
+		if self._showCDCWarning!=showCDCWarning:
+			self._showCDCWarning=showCDCWarning
+			self.on_showCDCWarning.emit()
+
+	#def _setShowCDCWarning
+
 	@Slot(bool)
 	def manageWifiControl(self,value):
 
@@ -544,7 +562,13 @@ class LliurexWifiControl(QObject):
 		if self.updateInfoT.ret[0]:
 			self._initForm()
 			self.showSettingsMessage=[True,self.updateInfoT.ret[1],"Success"]
-			self.closeGui=True
+			if self.isWifiEnabled and self.currentWifiOption!=3: 
+				if not LliurexWifiControl.n4dMan.getIntegrationCDCStatus():
+					self.showCDCWarning=True
+				else:
+					self.closeGui=True
+			else:
+				self.closeGui=True
 		else:
 			self.showSettingsMessage=[True,self.updateInfoT.ret[1],"Error"]
 			self.closeGui=False
@@ -565,7 +589,15 @@ class LliurexWifiControl(QObject):
 		else:
 			self.closeGui=True
 
-	#def _initForm	
+	#def _initForm
+
+	@Slot()
+	def manageCDCWarning(self):
+
+		self.showCDCWarning=False
+		self.closeGui=True
+
+	#def manageCDCWarning	
 
 	@Slot()
 	def cancelChanges(self):
@@ -685,6 +717,9 @@ class LliurexWifiControl(QObject):
 	on_showChangesDialog=Signal()
 	showChangesDialog=Property(bool,_getShowChangesDialog,_setShowChangesDialog,notify=on_showChangesDialog)
 
+	on_showCDCWarning=Signal()
+	showCDCWarning=Property(bool,_getShowCDCWarning,_setShowCDCWarning,notify=on_showCDCWarning)
+	
 	on_closePopUp=Signal()
 	closePopUp=Property(bool,_getClosePopUp,_setClosePopUp, notify=on_closePopUp)
 

@@ -2,6 +2,7 @@
 
 import n4d.client
 import os
+import subprocess
 import sys
 import syslog
 import json
@@ -12,6 +13,7 @@ import grp
 class N4dManager:
 
 	APPLY_CHANGES_SUCCESSFUL=10
+	WARNING_CDC_ACTIVATION_REQUIRED=20
 	CHANGE_WIFI_ERROR=-10
 	CHANGE_AUTOLOGIN_PASSWORD_ERROR=-20
 	CHANGE_AUTOLOGIN_STATUS_ERROR=-30
@@ -193,5 +195,19 @@ class N4dManager:
 		syslog.syslog(msg)
 
 	#def writeLog
+
+	def getIntegrationCDCStatus(self):
+
+		cmd="cdccli -t"
+		p=subprocess.Popen(cmd,shell=True,stdout=subprocess.PIPE)
+		poutput=p.communicate()
+		rc=p.returncode
+		
+		if rc==0:
+			return True
+		else:
+			return False
+
+	#def getIntegrationCDCStatus
 
 #class N4dManager
