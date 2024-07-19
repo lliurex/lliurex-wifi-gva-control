@@ -3,8 +3,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-03-07 09:15+0100\n"
-"PO-Revision-Date: 2024-03-07 09:16+0100\n"
+"POT-Creation-Date: 2024-07-19 08:16+0200\n"
+"PO-Revision-Date: 2024-07-19 08:18+0200\n"
 "Last-Translator: lliurex <lliurex@gva.es>\n"
 "Language-Team: Spanish\n"
 "Language: es\n"
@@ -12,7 +12,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 2.3\n"
+"X-Generator: Poedit 3.0.1\n"
 
 #: ../lliurex-wifi-gva-control.install/ui/rsrc/ApplicationOptions.qml:27
 msgid "Configuration"
@@ -96,13 +96,12 @@ msgid "Accept"
 msgstr "Accepta"
 
 #: ../lliurex-wifi-gva-control.install/ui/rsrc/WifiOptions.qml:419
-#: ../lliurex-wifi-gva-control.install/ui/rsrc/WifiOptions.qml:467
 msgid ""
-"It is necessary to activate the integration with CDC to be able to log in "
-"with WIFI GVA"
+"It is necessary to activate the integration with Digital Identitiy to be "
+"able to log in with WIFI GVA"
 msgstr ""
-"És necessari activar la integració amb el CDC per a poder iniciar sessió amb "
-"la WIFI GVA"
+"És necessari activar la integració amb la Identitat Digital per a poder "
+"iniciar sessió amb la WIFI GVA"
 
 #: ../lliurex-wifi-gva-control.install/ui/rsrc/WifiOptions.qml:422
 msgid "Close"
@@ -111,6 +110,14 @@ msgstr "Tanca"
 #: ../lliurex-wifi-gva-control.install/ui/rsrc/WifiOptions.qml:464
 msgid "Changes applied successfully"
 msgstr "Els canvis s’ha aplicat correctament"
+
+#: ../lliurex-wifi-gva-control.install/ui/rsrc/WifiOptions.qml:467
+msgid ""
+"It is necessary to activate the integration with Digital Identity to be able "
+"to log in with WIFI GVA"
+msgstr ""
+"És necessari activar la integració amb la Identitat Digital per a poder "
+"iniciar sessió amb la WIFI GVA"
 
 #: ../lliurex-wifi-gva-control.install/ui/rsrc/WifiOptions.qml:470
 msgid "Error changing WIFI settings"
