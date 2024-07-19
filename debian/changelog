@@ -1,3 +1,9 @@
+lliurex-wifi-gva-control (1.15.5) jammy; urgency=medium
+
+  * Changed CDC by ID references
+  
+ -- Juan Ramon Pelegrina <juapesai@hotmail.com>  Fri, 19 Jul 2024 08:23:19 +0200
+
 lliurex-wifi-gva-control (1.15.4) jammy; urgency=medium
 
   * Added warning if CDC is not enabled
