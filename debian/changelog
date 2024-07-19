@@ -1,3 +1,9 @@
+lliurex-wifi-gva-control (1.5.5) focal; urgency=medium
+
+  * Changed CDC by ID references
+  
+ -- Juan Ramon Pelegrina <juapesai@hotmail.com>  Fri, 19 Jul 2024 08:39:15 +0200
+
 lliurex-wifi-gva-control (1.5.4) focal; urgency=medium
 
   * Added warning if CDC is not enabled
