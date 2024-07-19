@@ -69,7 +69,7 @@ class WifiGvaControlCliManager(object):
 
 		if self.isWifiConnectionEnabled and self.currentWifiConnection!=3:
 			if not self.isCDCIntegrationEnabled:
-				print('   [Wifi-GVA-Control]: WARNING It is necessary to activate the integration with CDC to be able to log in with WIFI GVA')
+				print('   [Wifi-GVA-Control]: WARNING It is necessary to activate the integration with ID to be able to log in with WIFI GVA')
 
 		return 0
 	
@@ -134,7 +134,7 @@ class WifiGvaControlCliManager(object):
 						print('   [Wifi-GVA-Control]: Action completed successfull')
 						self._getInfo("End")
 						if wifiValue!=3 and not self.isCDCIntegrationEnabled:
-							print('   [Wifi-GVA-Control]: WARNING It is necessary to activate the integration with CDC to be able to log in with WIFI GVA')
+							print('   [Wifi-GVA-Control]: WARNING It is necessary to activate the integration with ID to be able to log in with WIFI GVA')
 						return 0
 
 					except n4d.client.CallFailedError as e:

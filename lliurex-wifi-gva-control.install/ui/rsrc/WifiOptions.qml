@@ -416,7 +416,7 @@ Rectangle{
         id:cdcWarning
         dialogTitle:"Lliurex Wifi GVA Control"+" - "+i18nd("lliurex-wifi-gva-control","Wifi configuration")
         dialogVisible:wifiControlBridge.showCDCWarning
-        dialogMsg:i18nd("lliurex-wifi-gva-control","It is necessary to activate the integration with CDC to be able to log in with WIFI GVA")
+        dialogMsg:i18nd("lliurex-wifi-gva-control","It is necessary to activate the integration with Digital Identitiy to be able to log in with WIFI GVA")
         btnAcceptVisible:false
         btnDiscardVisible:false
         btnCancelText:i18nd("lliurex-wifi-gva-control","Close")
@@ -464,7 +464,7 @@ Rectangle{
                 msg=i18nd("lliurex-wifi-gva-control","Changes applied successfully");
                 break;
             case 20:
-                msg=i18nd("lliurex-wifi-gva-control","It is necessary to activate the integration with CDC to be able to log in with WIFI GVA")
+                msg=i18nd("lliurex-wifi-gva-control","It is necessary to activate the integration with Digital Identity to be able to log in with WIFI GVA")
                 break;
             case -10:
                 msg=i18nd("lliurex-wifi-gva-control","Error changing WIFI settings")
