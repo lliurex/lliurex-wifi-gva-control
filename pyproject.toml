@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools","setuptools-scm"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "lliurex-wifi-gva-control-cli"
+version = "0.1"
+description = "Tool to configure connection to Wifi GVA"
+authors = [
+	{ name = "Juan Ramon Pelegrina", email="juapesai@hotmail.com" },
+	{ name = "LliureX Team"}
+]
+license = {text="GPL-3"}
+urls = {repository="https://github.com/lliurex/lliurex-wifi-gva-control"}
+
+[tool.setuptools]
+packages = ["wifigvacontrolcli"]
+
+[tool.setuptools.package-dir]
+wifigvacontrolcli = "lliurex-wifi-gva-control-cli"
+
+[tool.setuptools.exclude-package-data]
+wifigvacontrolcli = ["lliurex-wifi-gva-control-cli"]
+
+[tool.setuptools.data-files]
+"sbin" = ["lliurex-wifi-gva-control-cli/lliurex-wifi-gva-control-cli"]
