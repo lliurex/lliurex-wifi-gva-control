@@ -22,6 +22,7 @@ Dialog {
     visible:dialogVisible
     title:dialogTitle
     modal:true
+    anchors.centerIn: Overlay.overlay
 
     contentItem: Rectangle {
         color: "#ebeced"
