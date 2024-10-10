@@ -1,3 +1,9 @@
+lliurex-wifi-gva-control (1.25.6) noble; urgency=medium
+
+  * Fixed Dialog position
+
+ -- Juan Ramon Pelegrina <juapesai@hotmail.com>  Thu, 10 Oct 2024 10:55:04 +0200
+
 lliurex-wifi-gva-control (1.25.5) noble; urgency=medium
 
   * Initial release for Noble
