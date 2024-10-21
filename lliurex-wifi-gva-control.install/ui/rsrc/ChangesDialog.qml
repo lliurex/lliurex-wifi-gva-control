@@ -23,7 +23,13 @@ Dialog {
     title:dialogTitle
     modal:true
     anchors.centerIn: Overlay.overlay
-
+    background:Rectangle{
+        color:"#ebeced"
+        border.color:"#b8b9ba"
+	border.width:1
+	radius:1,5
+    }
+    
     contentItem: Rectangle {
         color: "#ebeced"
         implicitWidth: 420
