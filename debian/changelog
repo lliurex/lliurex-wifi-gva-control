@@ -1,3 +1,9 @@
+lliurex-wifi-gva-control (1.15.6) jammy; urgency=medium
+
+  * Fixed spanish translations
+  
+ -- Juan Ramon Pelegrina <juapesai@hotmail.com>  Mon, 21 Oct 2024 10:21:20 +0200
+
 lliurex-wifi-gva-control (1.15.5) jammy; urgency=medium
 
   * Changed CDC by ID references
