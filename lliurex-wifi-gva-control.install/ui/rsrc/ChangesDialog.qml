@@ -26,8 +26,8 @@ Dialog {
     background:Rectangle{
         color:"#ebeced"
         border.color:"#b8b9ba"
-	border.width:1
-	radius:1,5
+        border.width:1
+        radius:0,5
     }
     
     contentItem: Rectangle {
