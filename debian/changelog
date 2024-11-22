@@ -1,3 +1,9 @@
+lliurex-wifi-gva-control (1.25.9) noble; urgency=medium
+
+  * Fixed launcher to show app icon in Wayland
+
+ -- Juan Ramon Pelegrina <juapesai@hotmail.com>  Fri, 22 Nov 2024 10:36:00 +0100
+
 lliurex-wifi-gva-control (1.25.8) noble; urgency=medium
 
   * Minor fixes in style
