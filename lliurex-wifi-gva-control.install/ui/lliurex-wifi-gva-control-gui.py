@@ -9,6 +9,7 @@ import sys
 import LliurexWifiControl
 
 app = QApplication()
+app.setDesktopFileName("lliurex-wifi-gva-control")
 engine = QQmlApplicationEngine()
 engine.clearComponentCache()
 context=engine.rootContext()
@@ -22,7 +23,6 @@ if not engine.rootObjects():
 	sys.exit(-1)
 
 engine.quit.connect(QApplication.quit)
-app.setWindowIcon(QIcon("/usr/share/icons/hicolor/scalable/apps/lliurex-wifi-gva-control.svg"));
 ret=app.exec()
 del engine
 del app
