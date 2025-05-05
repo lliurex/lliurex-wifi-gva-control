@@ -97,7 +97,7 @@ ApplicationWindow {
                     property: "opacity"
                     from: 0
                     to:1
-                    duration: 600
+                    duration: 60
                 }
             }
             replaceExit: Transition {
@@ -105,7 +105,7 @@ ApplicationWindow {
                     property: "opacity"
                     from: 1
                     to:0
-                    duration: 600
+                    duration: 60
                 }
             }
 
