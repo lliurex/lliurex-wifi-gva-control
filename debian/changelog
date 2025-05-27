@@ -1,3 +1,9 @@
+lliurex-wifi-gva-control (1.15.8) jammy; urgency=medium
+
+  * Fixed clint imports in cli
+  
+ -- Juan Ramon Pelegrina <juapesai@hotmail.com>  Tue, 27 May 2025 08:56:37 +0200
+
 lliurex-wifi-gva-control (1.15.7) jammy; urgency=medium
 
   * Improved transitions between stacks
