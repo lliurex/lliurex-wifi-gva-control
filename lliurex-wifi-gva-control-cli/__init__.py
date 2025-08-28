@@ -287,8 +287,8 @@ class WifiGvaControlCliManager(object):
 		'''
 			Values:
 				- 0: Disable
-				- 1: WIFI_PROF
-				- 2: WIFI_ALU
+				- 1: WIFI_EDU
+				- 2: WIFI_EDU: for backward compatibility
 				- 3: AUTOLOGIN
 		'''
 
@@ -330,19 +330,15 @@ class WifiGvaControlCliManager(object):
 	def _mappingWifiOption(self,wifiOption,mappingType):
 
 		if mappingType=="TextToInt":
-			if wifiOption=="WIFI_PROF":
+			if wifiOption=="WIFI_EDU":
 				return 1
-			elif wifiOption=="WIFI_ALU":
-				return 2
 			elif wifiOption=="ALUMNAT":
 				return 3
 			else:
 				return -1
 		else:
-			if wifiOption==1:
-				return "WIFI_PROF"
-			elif wifiOption==2:
-				return "WIFI_ALU"
+			if wifiOption==1 or wifiOption==2:
+				return "WIFI_EDU"
 			elif wifiOption==3:
 				return "ALUMNAT"
 

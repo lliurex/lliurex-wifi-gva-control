@@ -14,12 +14,12 @@ def usage():
 		puts("Actions")
 		with indent(4):	
 			puts("currentconfig: Shows information about current Wifi GVA configuration")
-			puts("enablewifi WIFI_PRO|WIFI_ALU|ALUMNAT <PASSWORD> <CONFIRM_PASSWORD>: Activate the automatic connection to the indicated Wifi GVA. For ALUMNAT option if may be necessary to enter password for alumnat user if it is not configured")
+			puts("enablewifi WIFI_EDU|ALUMNAT <PASSWORD> <CONFIRM_PASSWORD>: Activate the automatic connection to the indicated Wifi GVA. For ALUMNAT option if may be necessary to enter password for alumnat user if it is not configured")
 			puts("disablewifi: Disable automatic connection to the Wifi GVA")
 			puts("showalumnatpassword: Show current password for alumnat user")
 			puts("updatealumnatpassword <PASSWORD> <CONFIRM_PASSWORD>: update the password for alumnat user")
 			puts("removealumnatpassword: delete the password for user alumnat")
-			puts("n4dupdatepassword <ENCODED_PASSWORD: option to update the password for alumnat user with n4d-oneshot. Option valid only for scheduled password changes")
+			puts("n4dupdatepassword <ENCODED_PASSWORD>: option to update the password for alumnat user with n4d-oneshot. Option valid only for scheduled password changes")
 		puts("Flags")
 		with indent(4):
 			puts("-h --help : Show help")
@@ -37,7 +37,7 @@ if __name__ == '__main__':
 	args = arguments.Args().copy
 	mode=False
 	debug=False
-	wifiOption="WIFI_ALU"
+	wifiOption="WIFI_EDU"
 	password=""
 	confirmPassword=""
 
