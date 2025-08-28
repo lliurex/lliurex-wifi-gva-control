@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-08-28 09:23+0200\n"
-"PO-Revision-Date: 2025-08-28 09:27+0200\n"
+"PO-Revision-Date: 2025-08-28 11:26+0200\n"
 "Last-Translator: lliurex <lliurex@gva.es>\n"
 "Language-Team: Spanish\n"
 "Language: es\n"
@@ -12,7 +12,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 3.0.1\n"
+"X-Generator: Poedit 3.4.2\n"
 
 #: ../lliurex-wifi-gva-control.install/ui/rsrc/ApplicationOptions.qml:27
 msgid "Configuration"
@@ -29,7 +29,7 @@ msgstr "Configuració de la connexió WIFI GVA"
 #: ../lliurex-wifi-gva-control.install/ui/rsrc/WifiOptions.qml:43
 msgid "Activate automatic connection to the Wifi (WIFI_EDU) at login"
 msgstr ""
-"Activar la connexió automàtica a la wifi (WIFI_EDU)  en l'inici de sessió"
+"Activar la connexió automàtica a la wifi (WIFI_EDU) en l'inici de sessió"
 
 #: ../lliurex-wifi-gva-control.install/ui/rsrc/WifiOptions.qml:61
 msgid "Access mode:"
