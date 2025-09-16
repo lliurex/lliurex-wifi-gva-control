@@ -26,7 +26,7 @@ class N4dManager:
 
 		self.debug=True
 		self.isWifiEnabled=False
-		self.currentWifiOption=2
+		self.currentWifiOption=1
 		self.currentPassword=""
 		self.wifiConfiguration=0
 		self.currentAutologinStatus=False
@@ -50,9 +50,9 @@ class N4dManager:
 		'''
 			Values:
 				- 0: Disable
-				- 1: WIFI_PROF
-				- 2: WIFI_ALU
-				- 3: WIFI_ALU+AUTOLOGIN
+				- 1: WIFI_EDU
+				- 2: WIFI_EDU:for backward compatibility 
+				- 3: WIFI_EDU+AUTOLOGIN
 		'''
 
 		try:
@@ -64,7 +64,7 @@ class N4dManager:
 			if self.wifiConfiguration in [0,1,2,3]:
 				if self.wifiConfiguration==0:
 					self.isWifiEnabled=False
-					self.currentWifiOption=2
+					self.currentWifiOption=1
 				else:
 					self.isWifiEnabled=True
 					self.currentWifiOption=self.wifiConfiguration
