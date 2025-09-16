@@ -1,3 +1,9 @@
+lliurex-wifi-gva-control (1.25.12) noble; urgency=medium
+
+  * Changes to support new WIFI_EDU conexion
+  
+ -- Juan Ramon Pelegrina <juapesai@hotmail.com>  Tue, 16 Sep 2025 14:05:53 +0200
+
 lliurex-wifi-gva-control (1.25.11) noble; urgency=medium
 
   * Fixed clint imports in cli
