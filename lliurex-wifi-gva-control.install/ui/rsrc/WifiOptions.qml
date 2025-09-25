@@ -40,7 +40,7 @@ Rectangle{
 
             CheckBox {
                 id:enableWifiCb
-                text:i18nd("lliurex-wifi-gva-control","Activate automatic connection to the Wifi")
+                text:i18nd("lliurex-wifi-gva-control","Activate automatic connection to the Wifi (WIFI_EDU) at login")
                 checked:wifiControlBridge.isWifiEnabled
                 font.pointSize: 10
                 focusPolicy: Qt.NoFocus
@@ -58,7 +58,7 @@ Rectangle{
                 Layout.fillWidth:true
                 Layout.leftMargin:26
                 Text{ 
-                    text:i18nd("lliurex-wifi-gva-control","Default connection:")
+                    text:i18nd("lliurex-wifi-gva-control","Access mode:")
                     font.pointSize: 10
                 }
             }
@@ -78,23 +78,12 @@ Rectangle{
                     Layout.alignment:Qt.AlignTop
 
                    RadioButton{
-                        id:teacherOption
+                        id:defaultOption
                         checked:getWifiOption(1)
                         enabled:enableWifiCb.checked?true:false
-                        text:"WIFI_PROF"
+                        text:i18nd("lliurex-wifi-gva-control","Access using user credentials")
                         onToggled:{
                             wifiControlBridge.manageWifiOptions(1)
-                            confirmPasswordValue.text=""
-                        }
-                    }
-
-                    RadioButton{
-                        id:aluOption
-                        checked:getWifiOption(2)
-                        enabled:enableWifiCb.checked?true:false
-                        text:"WIFI_ALU"
-                        onToggled:{
-                            wifiControlBridge.manageWifiOptions(2)
                             confirmPasswordValue.text=""
                         }
                     }
@@ -103,7 +92,7 @@ Rectangle{
                         id:autoLoginOption
                         checked:getWifiOption(3)
                         enabled:enableWifiCb.checked?true:false
-                        text:"WIFI_ALU: "+i18nd("lliurex-wifi-gva-control","automatic login with alumnat user")
+                        text:i18nd("lliurex-wifi-gva-control","Automatic login with alumnat user")
                         onToggled:{
                             wifiControlBridge.manageWifiOptions(3)
                             confirmPasswordValue.text=""
@@ -513,13 +502,8 @@ Rectangle{
         switch (wifiControlBridge.currentWifiOption){
 
             case 1:
-                if (option==1){
-                    return true
-                }else{
-                    return false
-                }
             case 2:
-                if (option==2){
+                if (option==1){
                     return true
                 }else{
                     return false
