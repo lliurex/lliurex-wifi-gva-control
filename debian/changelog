@@ -1,3 +1,9 @@
+lliurex-wifi-gva-control (1.25.13) noble; urgency=medium
+
+  * Fixed unnattended mode
+  
+ -- Juan Ramon Pelegrina <juapesai@hotmail.com>  Wed, 08 Oct 2025 16:32:14 +0200
+
 lliurex-wifi-gva-control (1.25.12) noble; urgency=medium
 
   * Changes to support new WIFI_EDU conexion
