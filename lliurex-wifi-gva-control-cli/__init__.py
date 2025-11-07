@@ -407,6 +407,9 @@ class WifiGvaControlCliManager(object):
 		else:
 			self.writeLog("User login in CLI: No current user detected. A script may have been executed at login")
 
+		if self.unattendedMode:
+			self.currentUser=""
+			
 		self.writeLog("Unattended Mode:%s"%(str(self.unattendedMode)))
 
 	#def _getCurrentUser
