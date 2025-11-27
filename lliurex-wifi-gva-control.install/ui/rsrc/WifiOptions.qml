@@ -3,7 +3,6 @@ import org.kde.kirigami as Kirigami
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
-import QtQuick.Dialogs
 
 Rectangle{
     color:"transparent"
@@ -351,7 +350,6 @@ Rectangle{
 
     ChangesDialog{
         id:wifiChangesDialog
-        dialogTitle:"Lliurex Wifi GVA Control"+" - "+i18nd("lliurex-wifi-gva-control","Wifi configuration")
         dialogVisible:wifiControlBridge.showChangesDialog
         dialogMsg:i18nd("lliurex-wifi-gva-control","The are pending changes to apply.\nDo you want apply the changes or discard them?")
         btnAcceptVisible:true
@@ -380,7 +378,6 @@ Rectangle{
 
     ChangesDialog{
         id:clearPasswordDialog
-        dialogTitle:"Lliurex Wifi GVA Control"+" - "+i18nd("lliurex-wifi-gva-control","Wifi configuration")
         dialogVisible:false
         dialogMsg:i18nd("lliurex-wifi-gva-control","Do you want to delete the password for alumnat user?")
         btnAcceptVisible:false
@@ -403,7 +400,6 @@ Rectangle{
     }
     ChangesDialog{
         id:cdcWarning
-        dialogTitle:"Lliurex Wifi GVA Control"+" - "+i18nd("lliurex-wifi-gva-control","Wifi configuration")
         dialogVisible:wifiControlBridge.showCDCWarning
         dialogMsg:i18nd("lliurex-wifi-gva-control","It is necessary to activate the integration with Digital Identitiy to be able to log in with WIFI GVA")
         btnAcceptVisible:false
