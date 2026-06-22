@@ -359,7 +359,7 @@ class LliurexWifiControl(QObject):
 		self._showSettingsMessage={"show":False,"msgCode":"","type":""}
 		self._showChangesDialog=False
 		self._closeGui=False
-		self._showPopUp=True
+		self._showPopUp=False
 		self._currentStack=0
 		self._currentOptionsStack=0
 		self._isWifiEnabled=False
@@ -474,6 +474,7 @@ class LliurexWifiControl(QObject):
 	@Slot(dict)
 	def changeInConfirmPasswordEntry(self,value):
 
+		print(value)
 		if not self.initialPassword and self.passwordEntryEnabled:
 			self._managePassword(value)
 	
