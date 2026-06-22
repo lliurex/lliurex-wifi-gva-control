@@ -22,9 +22,9 @@ Rectangle{
 
         Kirigami.InlineMessage {
             id: messageLabel
-            visible:wifiControlBridge.showSettingsMessage[0]
-            text:getMessageText(wifiControlBridge.showSettingsMessage[1])
-            type:getMessageType(wifiControlBridge.showSettingsMessage[2])
+            visible:wifiControlBridge.showSettingsMessage.show
+            text:getMessageText(wifiControlBridge.showSettingsMessage.msgCode)
+            type:getTypeMessage(wifiControlBridge.showSettingsMessage.type)
             Layout.minimumWidth:490
             Layout.fillWidth:true
             Layout.topMargin: 40
@@ -125,7 +125,7 @@ Rectangle{
                         echoMode:TextInput.Password
 
                         onTextChanged:{
-                            wifiControlBridge.changeInPasswordEntry([passwordValue.text,confirmPasswordValue.text])
+                            wifiControlBridge.changeInPasswordEntry({"password":passwordValue.text,"confirmPassword":confirmPasswordValue.text})
                         }
                     }
 
@@ -252,7 +252,7 @@ Rectangle{
                         echoMode:TextInput.Password
 
                         onTextChanged:{
-                            wifiControlBridge.changeInConfirmPasswordEntry([passwordValue.text,confirmPasswordValue.text])
+                            wifiControlBridge.changeInConfirmPasswordEntry({"password":passwordValue.text,"confirmPassword":confirmPasswordValue.text})
                         }
                     }
 
@@ -304,7 +304,7 @@ Rectangle{
             text:i18nd("lliurex-wifi-gva-control","Apply")
             Layout.preferredHeight:40
             enabled:{
-                if ((wifiControlBridge.settingsWifiChanged) && (!wifiControlBridge.errorInPassword)){
+                if ((wifiControlBridge.changesInWifiSettings) && (!wifiControlBridge.errorInPassword)){
                     true
                 }else{
                     false
@@ -331,7 +331,7 @@ Rectangle{
                 if (wifiControlBridge.errorInPassword){
                     true
                 }else{
-                    if (wifiControlBridge.settingsWifiChanged){
+                    if (wifiControlBridge.changesInWifiSettings){
                         true
                     }else{
                         false
@@ -478,20 +478,20 @@ Rectangle{
 
     }
 
-    function getMessageType(type){
-
-        switch (type){
-            case "Info":
-                return Kirigami.MessageType.Information
-            case "Success":
+    function getTypeMessage(msgType) {
+        switch (msgType) {
+            case 0:
                 return Kirigami.MessageType.Positive
-            case "Error":
+            case 1:
                 return Kirigami.MessageType.Error
-            case "Warning":
+            case 2:
                 return Kirigami.MessageType.Warning
+            case 3:
+                return Kirigami.MessageType.Information
+           default:
+                return Kirigami.MessageType.Information
         }
-
-    } 
+    }
 
     function getWifiOption(option){
 
@@ -538,7 +538,7 @@ Rectangle{
         synchronizePopup.popupMessage=i18nd("lliurex-wifi-gva-control", "Apply changes. Wait a moment...")
         delayTimer.stop()
         delay(500, function() {
-            if (wifiControlBridge.closePopUp){
+            if (!wifiControlBridge.showPopUp){
                 synchronizePopup.close(),
                 delayTimer.stop()
                 confirmPasswordValue.text=""
@@ -551,7 +551,7 @@ Rectangle{
         synchronizePopup.popupMessage=i18nd("lliurex-wifi-gva-control", "Restoring previous values. Wait a moment...")
         delayTimer.stop()
         delay(1000, function() {
-            if (wifiControlBridge.closePopUp){
+            if (!wifiControlBridge.showPopUp){
                 synchronizePopup.close(),
                 delayTimer.stop()
                 confirmPasswordValue.text=""
