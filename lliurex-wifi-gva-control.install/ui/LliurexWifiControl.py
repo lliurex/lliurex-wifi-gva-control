@@ -388,7 +388,6 @@ class LliurexWifiControl(QObject):
 		self.currentPassword=self.n4dMan.currentPassword
 		self.currentWifiSettings=copy.deepcopy(self.n4dMan.currentWifiSettings)
 		self.passwordEntryEnabled=False
-		self.showSettingsMessage={"show":False,"msgCode":"","type":""}
 		self.showClearPasswordBtn=False
 		self.showEditPasswordBtn=False
 		self.passwordCleared=False
@@ -527,19 +526,21 @@ class LliurexWifiControl(QObject):
 	@Slot(dict)
 	def _updateInfoRet(self,ret):
 
+		self.showPopUp={"show":False,"msgCode":""}
+		self.showSettingsMessage={"show":True,"msgCode":ret.get("code"),"type":ret.get("type")}
+
 		if not ret.get("status"):
 			self.closeGui=False
-			self.showSettingsMessage={"show":True,"msgCode":ret.get("code"),"type":ret.get("type")}
 			return
 
-		self._initForm()
-		self.showSettingsMessage={"show":True,"msgCode":ret.get("code"),"type":ret.get("type")}
-		self.closeGui=True
-
-		if self.isWifiEnabled and self.currentWifiOption!=3: 
-			if not self.n4dMan.getIntegrationCDCStatus():
-				self.showCDCWarning=True
-				self.closeGui=False
+		isCDCMissign=self.isWifiEnabled and self.currentWifiOption!=3 and not self.n4dMan.getIntegrationCDCStatus()
+		
+		if isCDCMissign:
+			self.showCDCWarning=True
+			self.closeGui=False
+		else:
+			self._initForm()
+			self.closeGui=True
 
 	#def _updateInfoRet
 
@@ -548,7 +549,6 @@ class LliurexWifiControl(QObject):
 		self._loadVars()
 		self.changesInWifiSettings=False
 		self.showConfirmPassword=False
-		self.showPopUp={"show":False,"msgCode":""}
 		self.closeGui=True
 
 	#def _initForm
@@ -568,6 +568,7 @@ class LliurexWifiControl(QObject):
 		self.showChangesDialog=False
 		self.showSettingsMessage={"show":False,"msgCode":"","type":""}
 		self._initForm()
+		self.showPopUp={"show":False,"msgCode":""}
 
 	#def cancelChanges
 

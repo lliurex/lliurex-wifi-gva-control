@@ -138,13 +138,14 @@ Rectangle{
                     id:showPasswdBtn
                     display:AbstractButton.IconOnly
                     icon.name:getConfiguration(passwordValue.echoMode,"iconName")
+                    hoverEnabled:true
+                    visible:enableWifiCb.checked && autoLoginOption.checked
+                    enabled: visible && passwordValue.text!==""
                     ToolTip.delay: 1000
                     ToolTip.timeout: 3000
                     ToolTip.visible: hovered
                     ToolTip.text:getConfiguration(passwordValue.echoMode,"toolTip")
-                    hoverEnabled:true
-                    visible:enableWifiCb.checked && autoLoginOption.checked
-                    enabled: visible && passwordValue.text!==""
+   
                     onClicked:{
                         passwordValue.echoMode=(passwordValue.echoMode===TextInput.Password)
                         ? TextInput.Normal

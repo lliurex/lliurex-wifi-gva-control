@@ -95,108 +95,92 @@ class N4dManager:
 
 	#def loadConfig
 
-	def applyChanges(self,info):
+	def applyChanges(self, info):
+	    '''
+	    Actions in autologin:
+	        - -1: Nothing
+	        -  0: Enabled
+	        -  1: Disabled
+	        -  2: Updated Password
+	    '''
+	    changeWifi = False
+	    changePassword = False
+	    lastError = None
+	    actionAutologin = -1
+	    errorCount = 0
 
-		'''
-			Actions in autologin:
-				- -1: Nothing
-				- 0: Enabled
-				- 1: Disabled
-				- 2: Updated Password
-		'''
+	    currentPassword = info.get('currentPassword')
+	    confirmPassword = info.get("confirmPassword")
+	    currentWifiOption = info.get('currentWifiOption') if info.get('isWifiEnabled') else 0
 
-		changeWifi=False
-		changePassword=False
-		lastError=None
-		actionAutologin=-1
-		errorCount=0
-		currentPassword=info.get('currentPassword')
-		confirmPassword=info.get("confirmPassword")
+	    if currentWifiOption == 3:
+	        if not currentPassword:
+	            return {"status": False, "code": N4dManager.ERROR_PASSWORD_EMPTY, "type": N4dManager.KIRIGAMI_MSG_ERROR}
+	        if (currentPassword != self.currentPassword) and (currentPassword != confirmPassword):
+	            return {"status": False, "code": N4dManager.ERROR_PASSWORDS_NOT_MATCH, "type": N4dManager.KIRIGAMI_MSG_ERROR}
 
-		if info.get('isWifiEnabled'):
-			currentWifiOption=info.get('currentWifiOption')
-		else:
-			currentWifiOption=0
+	    if currentWifiOption != self.wifiConfiguration:
+	        changeWifi = True
+	        if currentWifiOption == 3:
+	            actionAutologin = 0
+	        elif self.currentAutologinStatus:
+	            actionAutologin = 1
 
-		if currentWifiOption!=self.wifiConfiguration:
-			changeWifi=True
-			if currentWifiOption==3:
-				actionAutologin=0
-				if not currentPassword:
-					return {"status":False,"code":N4dManager.ERROR_PASSWORD_EMPTY,"type":N4dManager.KIRIGAMI_MSG_ERROR}
-				else:
-					if currentPassword!=confirmPassword:
-						return {"status":False,"code":N4dManager.ERROR_PASSWORDS_NOT_MATCH,"type":N4dManager.KIRIGAMI_MSG_ERROR}
-			else:
-				if self.currentAutologinStatus:
-					actionAutologin=1
-		
-		if currentPassword!=self.currentPassword:
-			if currentWifiOption==3:
-				if not currentPassword:
-					return {"status":False,"code":N4dManager.ERROR_PASSWORD_EMPTY,"type":N4dManager.KIRIGAMI_MSG_ERROR}
-				else:
-					if currentPassword!=confirmPassword:
-						return {"status":False,"code":N4dManager.ERROR_PASSWORDS_NOT_MATCH,"type":N4dManager.KIRIGAMI_MSG_ERROR}
+	    if currentPassword != self.currentPassword:
+	        changePassword = True
+	        if currentWifiOption == 3 and actionAutologin == -1:
+	            actionAutologin = 2 if self.currentAutologinStatus else 0
 
-			changePassword=True
-			if currentWifiOption==3 and actionAutologin==-1:
-				actionAutologin=2 if self.currentAutologinStatus else 0
+	    if changeWifi:
+	        self.writeLog("Changes in wifi configuration:")
+	        self.writeLog(f"- Action: Changed Wifi Option to: {currentWifiOption}")
+	        try:
+	            self.client.WifiEduGva.set_settings(currentWifiOption)
+	            self.writeLog("- Result: Changes apply successful")
+	        except Exception as e:
+	            self.writeLog(f"- Result: Error applying changes: {e}")
+	            lastError = N4dManager.CHANGE_WIFI_ERROR
+	            errorCount += 1
 
-		if changeWifi:
-			self.writeLog("Changes in wifi configuration:")
-			self.writeLog(f"- Action: Changed Wifi Option to: {currentWifiOption}")
-			try:
-				ret=self.client.WifiEduGva.set_settings(currentWifiOption)
-				self.writeLog("- Result: Changes apply successful")
-			except Exception as e:
-				self.writeLog(f"- Result: Error applying changes: {e}")
-				lastError=N4dManager.CHANGE_WIFI_ERROR
-				errorCount+=1
+	    if changePassword:
+	        self.writeLog("Changes in autologin password:")
+	        action_text = "Update password" if currentPassword else "Clear password"
+	        self.writeLog(f"- Action: {action_text}")
+	        try:
+	            self.client.WifiEduGva.set_autologin(currentPassword)
+	            self.writeLog("- Result: changes apply successful")
+	        except Exception as e:
+	            self.writeLog(f"- Result: Error applying changes: {e}")
+	            lastError = N4dManager.CHANGE_AUTOLOGIN_PASSWORD_ERROR
+	            errorCount += 1
 
-		if changePassword:
-			self.writeLog("Changes in autologin password:")
-			if currentPassword!="":
-				self.writeLog("- Action: Update password")
-			else:
-				self.writeLog("- Action: Clear password")
-			try:
-				ret=self.client.WifiEduGva.set_autologin(currentPassword)
-				self.writeLog("- Result: changes apply successful")
-			except Exception as e:
-				self.writeLog(f"- Result: Error applying changes: {e}")
-				lastError=N4dManager.CHANGE_AUTOLOGIN_PASSWORD_ERROR
-				errorCount+=1
+	    if actionAutologin != -1:
+	        self.writeLog("Changes in autologin")
+	        try:
+	            if actionAutologin == 0:
+	                self.writeLog("- Action: Enable autologin")
+	                self.client.AlumnatAccountManager.enable_alumnat_user()
+	            elif actionAutologin == 1:
+	                self.writeLog("- Action: Disable autologin")
+	                self.client.AlumnatAccountManager.disable_alumnat_user()
+	            elif actionAutologin == 2:
+	                self.writeLog("- Action: Updated password")
+	                self.client.AlumnatAccountManager.fix_alumnat_password()
 
-		if actionAutologin!=-1:
-			self.writeLog("Changes in autologin")
-			try:
-				if actionAutologin==0:
-					self.writeLog("- Action: Enable autologin")
-					ret=self.client.AlumnatAccountManager.enable_alumnat_user()
-				elif actionAutologin==1:
-					self.writeLog("- Action: Disable autologin")
-					ret=self.client.AlumnatAccountManager.disable_alumnat_user()
-				elif actionAutologin==2:
-					self.writeLog("- Action: Updated password")
-					ret=self.client.AlumnatAccountManager.fix_alumnat_password()
-				
-				self.writeLog("- Result: Changes apply successful")
-			
-			except Exception as e:
-				self.writeLog(f"- Result: Error applying changes: {e}")
-				lastError=N4dManager.CHANGE_AUTOLOGIN_STATUS_ERROR
-				errorCount+=1
+	            self.writeLog("- Result: Changes apply successful")
+	        except Exception as e:
+	            self.writeLog(f"- Result: Error applying changes: {e}")
+	            lastError = N4dManager.CHANGE_AUTOLOGIN_STATUS_ERROR
+	            errorCount += 1
 
-		if errorCount>1:
-			return {"status":False,"code":N4dManager.CHANGE_MULTIPLE_ERROR,"type":N4dManager.KIRIGAMI_MSG_ERROR}
+	    if errorCount > 1:
+	        return {"status": False, "code": N4dManager.CHANGE_MULTIPLE_ERROR, "type": N4dManager.KIRIGAMI_MSG_ERROR}
+	    if errorCount == 1:
+	        return {"status": False, "code": lastError, "type": N4dManager.KIRIGAMI_MSG_ERROR}
 
-		if errorCount==1:
-			return {"status":False,"code":lastError,"type":N4dManager.KIRIGAMI_MSG_ERROR}
-
-		self.loadConfig("End")
-
-		return {"status":True,"code":N4dManager.APPLY_CHANGES_SUCCESSFUL,"type":N4dManager.KIRIGAMI_MSG_OK}
+	    self.loadConfig("End")
+	    
+	    return {"status": True, "code": N4dManager.APPLY_CHANGES_SUCCESSFUL, "type": N4dManager.KIRIGAMI_MSG_OK}
 
 	#def applyChanges
 
