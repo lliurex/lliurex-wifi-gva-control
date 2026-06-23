@@ -81,6 +81,13 @@ class N4dManager:
 		if wifiPassword is not None:
 			self.currentPassword=wifiPassword
 
+		self.currentWifiSettings={
+			"isWifiEnabled":self.isWifiEnabled,
+			"currentWifiOption":self.currentWifiOption,
+			"currentPassword":wifiPassword if wifiPassword is not None else "",
+			"confirmPassword":""
+		}
+
 		self.writeLog(f"- Current Wifi Option: {self.wifiConfiguration}")
 		self.writeLog(f"- Autologin: {self.currentAutologinStatus}")
 			
@@ -104,6 +111,7 @@ class N4dManager:
 		actionAutologin=-1
 		errorCount=0
 		currentPassword=info.get('currentPassword')
+		confirmPassword=info.get("confirmPassword")
 
 		if info.get('isWifiEnabled'):
 			currentWifiOption=info.get('currentWifiOption')
@@ -114,11 +122,23 @@ class N4dManager:
 			changeWifi=True
 			if currentWifiOption==3:
 				actionAutologin=0
+				if not currentPassword:
+					return {"status":False,"code":N4dManager.ERROR_PASSWORD_EMPTY,"type":N4dManager.KIRIGAMI_MSG_ERROR}
+				else:
+					if currentPassword!=confirmPassword:
+						return {"status":False,"code":N4dManager.ERROR_PASSWORDS_NOT_MATCH,"type":N4dManager.KIRIGAMI_MSG_ERROR}
 			else:
 				if self.currentAutologinStatus:
 					actionAutologin=1
 		
 		if currentPassword!=self.currentPassword:
+			if currentWifiOption==3:
+				if not currentPassword:
+					return {"status":False,"code":N4dManager.ERROR_PASSWORD_EMPTY,"type":N4dManager.KIRIGAMI_MSG_ERROR}
+				else:
+					if currentPassword!=confirmPassword:
+						return {"status":False,"code":N4dManager.ERROR_PASSWORDS_NOT_MATCH,"type":N4dManager.KIRIGAMI_MSG_ERROR}
+
 			changePassword=True
 			if currentWifiOption==3 and actionAutologin==-1:
 				actionAutologin=2 if self.currentAutologinStatus else 0

@@ -9,11 +9,8 @@ Popup {
     anchors.centerIn: Overlay.overlay
     modal: true
     focus: true
-    visible: wifiControlBridge.showPopUp
+    visible: wifiControlBridge.showPopUp.show
     closePolicy: Popup.NoAutoClose
-
-    property alias popupMessage:popupText.text
-
 
     background: Rectangle {
         color: palette.window
@@ -59,10 +56,25 @@ Popup {
         
         Text {
             id: popupText
+            text:getMessage(wifiControlBridge.showPopUp.msgCode)
             font.pointSize: 10
             color: palette.windowText
             Layout.alignment: Qt.AlignHCenter
             horizontalAlignment: Text.AlignHCenter
+        }
+    }
+
+    function getMessage(code){
+
+        switch (code){
+            case 30:
+                return i18nd("lliurex-wifi-gva-control", "Checking data. Wait a moment...")
+            case 31:
+                return i18nd("lliurex-wifi-gva-control", "Apply changes. Wait a moment...")
+            case 32:
+                return i18nd("lliurex-wifi-gva-control", "Restoring previous values. Wait a moment...")
+            default:
+                return ""
         }
     }
 }

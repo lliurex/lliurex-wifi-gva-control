@@ -7,6 +7,14 @@ import org.kde.kirigami as Kirigami
 Rectangle{
     id: rectLayout
     color:"transparent"
+
+    Timer{
+        id:debounceTimer
+        interval:500
+        repeat:false
+        property var callback
+        onTriggered: if (callback) callback()
+    }
     
     ColumnLayout{
         id:generalLayout
@@ -116,12 +124,13 @@ Rectangle{
                     horizontalAlignment:TextInput.AlignLeft
                     focus:true
                     text:wifiControlBridge.currentPassword
-                    enabled:wifiControlBridge.passwordEntryEnabled
+                    readOnly:!wifiControlBridge.passwordEntryEnabled
                     implicitWidth:200
                     echoMode:TextInput.Password
 
                     onTextChanged:{
-                        wifiControlBridge.changeInPasswordEntry({"password":passwordValue.text,"confirmPassword":confirmPasswordValue.text})
+                        debounceTimer.callback= ()=>wifiControlBridge.changeInPasswordEntry({"password":passwordValue.text,"confirmPassword":confirmPasswordValue.text})
+                        debounceTimer.restart()
                     }
                 }
 
@@ -149,7 +158,7 @@ Rectangle{
                     icon.name:!wifiControlBridge.passwordEntryEnabled?"document-edit":"dialog-cancel"
                     visible:wifiControlBridge.showEditPasswordBtn
                     hoverEnabled:true
-                    enabled: enableWifiCb.checked && autoLoginOption.checked && wifiControlBridge.currentPassword!=="" && !wifiControlBridge.showConfirmPassword
+                    enabled: enableWifiCb.checked && autoLoginOption.checked
                     ToolTip.delay: 1000
                     ToolTip.timeout: 3000
                     ToolTip.visible: hovered
@@ -195,16 +204,21 @@ Rectangle{
                     font.pointSize:10
                     horizontalAlignment:TextInput.AlignLeft
                     focus:true
-                    text:""
                     implicitWidth:200
                     echoMode:TextInput.Password
+
+                    onVisibleChanged:{
+                        confirmPasswordValue.text=""
+                    }
 
                     onTextChanged:{
                         
                         if (confirmPasswordValue.text===""){
                             return   
                         }
-                        wifiControlBridge.changeInConfirmPasswordEntry({"password":passwordValue.text,"confirmPassword":confirmPasswordValue.text})
+
+                        debounceTimer.callback= ()=>wifiControlBridge.changeInConfirmPasswordEntry({"password":passwordValue.text,"confirmPassword":confirmPasswordValue.text})
+                        debounceTimer.restart()
                     }
                 }
 
@@ -245,13 +259,12 @@ Rectangle{
             display:AbstractButton.TextBesideIcon
             icon.name:"dialog-ok"
             text:i18nd("lliurex-wifi-gva-control","Apply")
-            enabled:wifiControlBridge.changesInWifiSettings && !wifiControlBridge.errorInPassword
+            enabled:wifiControlBridge.changesInWifiSettings 
                     ?true
                     :false
             Keys.onReturnPressed: applyBtn.clicked()
             Keys.onEnterPressed: applyBtn.clicked()
             onClicked:{
-                applyChanges()
                 closeTimer.stop()
                 wifiControlBridge.applyChanges()
                 
@@ -265,11 +278,10 @@ Rectangle{
             display:AbstractButton.TextBesideIcon
             icon.name:"dialog-cancel"
             text:i18nd("lliurex-wifi-gva-control","Cancel")
-            enabled:wifiControlBridge.errorInPassword || wifiControlBridge.changesInWifiSettings
+            enabled:wifiControlBridge.changesInWifiSettings
             Keys.onReturnPressed: cancelBtn.clicked()
             Keys.onEnterPressed: cancelBtn.clicked()
             onClicked:{
-                discardChanges()
                 closeTimer.stop()
                 wifiControlBridge.cancelChanges()
             }
@@ -289,11 +301,9 @@ Rectangle{
         Connections{
             target:wifiChangesDialog
             function onDialogApplyClicked(){
-                applyChanges()
                 wifiControlBridge.manageChangesDialog("Accept")
             }
             function onDiscardDialogClicked(){
-                discardChanges()
                 wifiControlBridge.manageChangesDialog("Discard")
             }
             function onRejectDialogClicked(){
@@ -342,29 +352,9 @@ Rectangle{
 
         }
     }
+
     CustomPopup{
         id:synchronizePopup
-     }
-
-    Timer{
-        id:delayTimer
-        repeat:false
-
-        property var callback:null
-
-        onTriggered:{
-            if (callback){
-                callback()
-            }
-        }
-    }
-
-    function delay(delayTime,cb){
-        delayTimer.stop();
-        delayTimer.interval=delayTime;
-        delayTimer.repeat=true;
-        delayTimer.callback=cb
-        delayTimer.start()
     }
 
     function getMessageText(code){
@@ -439,27 +429,4 @@ Rectangle{
         
     }
 
-    function applyChanges(){
-        synchronizePopup.open()
-        synchronizePopup.popupMessage=i18nd("lliurex-wifi-gva-control", "Apply changes. Wait a moment...")
-        delayTimer.stop()
-        delay(500, function() {
-            if (!wifiControlBridge.showPopUp){
-                synchronizePopup.close()
-                confirmPasswordValue.text=""
-            }
-        })
-    } 
-
-    function discardChanges(){
-        synchronizePopup.open()
-        synchronizePopup.popupMessage=i18nd("lliurex-wifi-gva-control", "Restoring previous values. Wait a moment...")
-        delayTimer.stop()
-        delay(1000, function() {
-            if (!wifiControlBridge.showPopUp){
-                synchronizePopup.close(),
-                confirmPasswordValue.text=""
-            }
-        })
-    }  
 } 
