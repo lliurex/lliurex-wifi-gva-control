@@ -38,18 +38,19 @@ class UpdateInfo(QThread):
 
 	infoUpdated=Signal(dict)
 
-	def __init__(self,manager,info):
+	def __init__(self,manager,info, confirmPasswordEntry):
 
 		super().__init__()
 		self.manager=manager
 		self.updateInfo=info
+		self.confirmPasswordEntry=confirmPasswordEntry
 
 	#def __init__
 
 	def run(self,*args):
 		
 		time.sleep(1)
-		ret=self.manager.applyChanges(self.updateInfo)
+		ret=self.manager.applyChanges(self.updateInfo,self.confirmPasswordEntry)
 		self.infoUpdated.emit(ret)
 	
 	#def run
@@ -386,6 +387,7 @@ class LliurexWifiControl(QObject):
 		self.currentWifiOption=self.n4dMan.currentWifiOption
 		self.currentPassword=self.n4dMan.currentPassword
 		self.currentWifiSettings=copy.deepcopy(self.n4dMan.currentWifiSettings)
+		self.confirmPasswordEntry=""
 		self.passwordEntryEnabled=False
 		self.showClearPasswordBtn=False
 		self.showEditPasswordBtn=False
@@ -447,7 +449,7 @@ class LliurexWifiControl(QObject):
 	def changeInConfirmPasswordEntry(self,value):
 
 		if self.passwordEntryEnabled:
-			self.currentWifiSettings["confirmPassword"]=value.get("confirmPassword")
+			self.confirmPasswordEntry=value.get("confirmPassword")
 	
 	#def changeInConfirmPasswordEntry
 
@@ -490,7 +492,7 @@ class LliurexWifiControl(QObject):
 		if not self.passwordCleared or self.currentWifiOption==3:
 			self.currentPassword=self.n4dMan.currentPassword
 			self.currentWifiSettings["currentPassword"]=self.currentPassword
-			self.currentWifiSettings["confirmPassword"]=""
+			self.confirmPasswordEntry=""
 			self.passwordCleared=False
 
 		if not self.isWifiEnabled or self.currentWifiOption!=3:
@@ -514,7 +516,7 @@ class LliurexWifiControl(QObject):
 		self.showSettingsMessage={"show":False,"msgCode":"","type":""}
 		self.showPopUp={"show":True,"msgCode":SAVE_DATA}
 		self.showChangesDialog=False
-		self.updateInfoT=UpdateInfo(self.n4dMan,self.currentWifiSettings)
+		self.updateInfoT=UpdateInfo(self.n4dMan,self.currentWifiSettings,self.confirmPasswordEntry)
 		self.updateInfoT.start()
 		self.updateInfoT.infoUpdated.connect(self._updateInfoRet)
 		self.updateInfoT.finished.connect(self.updateInfoT.deleteLater)
@@ -589,7 +591,7 @@ class LliurexWifiControl(QObject):
 		self.showSettingsMessage={"show":False,"msgCode":"","type":""}
 		self.currentPassword=""
 		self.currentWifiSettings["currentPassword"]=""
-		self.currentWifiSettings["confirmPassword"]=""
+		self.confirmPasswordEntry=""
 		self.changeInPassword=True
 		self.passwordCleared=True
 		self.showClearPasswordBtn=False

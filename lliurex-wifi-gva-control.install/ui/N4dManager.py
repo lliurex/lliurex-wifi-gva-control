@@ -85,7 +85,6 @@ class N4dManager:
 			"isWifiEnabled":self.isWifiEnabled,
 			"currentWifiOption":self.currentWifiOption,
 			"currentPassword":wifiPassword if wifiPassword is not None else "",
-			"confirmPassword":""
 		}
 
 		self.writeLog(f"- Current Wifi Option: {self.wifiConfiguration}")
@@ -95,7 +94,7 @@ class N4dManager:
 
 	#def loadConfig
 
-	def applyChanges(self, info):
+	def applyChanges(self, info, confirmPasswordEntry):
 	    '''
 	    Actions in autologin:
 	        - -1: Nothing
@@ -110,7 +109,7 @@ class N4dManager:
 	    errorCount = 0
 
 	    currentPassword = info.get('currentPassword')
-	    confirmPassword = info.get("confirmPassword")
+	    confirmPassword = confirmPasswordEntry
 	    currentWifiOption = info.get('currentWifiOption') if info.get('isWifiEnabled') else 0
 
 	    if currentWifiOption == 3:
