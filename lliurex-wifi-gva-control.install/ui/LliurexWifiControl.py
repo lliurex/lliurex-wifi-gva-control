@@ -491,8 +491,7 @@ class LliurexWifiControl(QObject):
 			self.currentPassword=self.n4dMan.currentPassword
 			self.currentWifiSettings["currentPassword"]=self.currentPassword
 			self.currentWifiSettings["confirmPassword"]=""
-			if self.passwordCleared:
-				self.passwordCleared=False
+			self.passwordCleared=False
 
 		if not self.isWifiEnabled or self.currentWifiOption!=3:
 			self.passwordEntryEnabled=False
@@ -526,20 +525,20 @@ class LliurexWifiControl(QObject):
 	def _updateInfoRet(self,ret):
 
 		self.showPopUp={"show":False,"msgCode":""}
-		self.showSettingsMessage={"show":True,"msgCode":ret.get("code"),"type":ret.get("type")}
 
 		if not ret.get("status"):
 			self.closeGui=False
+			self.showSettingsMessage={"show":True,"msgCode":ret.get("code"),"type":ret.get("type")}
 			return
 
+		self._initForm()
+		self.showSettingsMessage={"show":True,"msgCode":ret.get("code"),"type":ret.get("type")}
+
 		isCDCMissign=self.isWifiEnabled and self.currentWifiOption!=3 and not self.n4dMan.getIntegrationCDCStatus()
-		
 		if isCDCMissign:
 			self.showCDCWarning=True
-			self.closeGui=False
-		else:
-			self._initForm()
-			self.closeGui=True
+		
+		self.closeGui=True
 
 	#def _updateInfoRet
 

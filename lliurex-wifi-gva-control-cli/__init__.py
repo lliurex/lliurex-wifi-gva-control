@@ -326,9 +326,6 @@ class WifiGvaControlCliManager(object):
 			self._writeLog(f"- Current Wifi Option: {wifiConfiguration}")
 			self._writeLog(f"- Password for alumnat user configured: {self.isAlumnatPasswordConfigured}")
 			
-			if not self.isCDCIntegrationEnabled:
-				print('   [Wifi-GVA-Control]: WARNING It is necessary to activate the integration with ID to be able to log in with WIFI GVA')
-
 			return True
 
 		except Exception as e:
