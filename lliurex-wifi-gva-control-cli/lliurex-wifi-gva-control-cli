@@ -1,93 +1,128 @@
 #! /usr/bin/python3
 import sys
 import os
-
-from clint import arguments
-from clint.textui import puts, indent
+import argparse
 
 from wifigvacontrolcli import WifiGvaControlCliManager
 
-def usage():
-	puts("Usage")
-	with indent(4):
-		puts("lliurex-wifi-gva-control-cli [FLAGS...] ACTION")
-		puts("Actions")
-		with indent(4):	
-			puts("currentconfig: Shows information about current Wifi GVA configuration")
-			puts("enablewifi WIFI_EDU|ALUMNAT <PASSWORD> <CONFIRM_PASSWORD>: Activate the automatic connection to the indicated Wifi GVA. For ALUMNAT option if may be necessary to enter password for alumnat user if it is not configured")
-			puts("disablewifi: Disable automatic connection to the Wifi GVA")
-			puts("showalumnatpassword: Show current password for alumnat user")
-			puts("updatealumnatpassword <PASSWORD> <CONFIRM_PASSWORD>: update the password for alumnat user")
-			puts("removealumnatpassword: delete the password for user alumnat")
-			puts("n4dupdatepassword <ENCODED_PASSWORD>: option to update the password for alumnat user with n4d-oneshot. Option valid only for scheduled password changes")
-		puts("Flags")
-		with indent(4):
-			puts("-h --help : Show help")
-			puts("-u --unattended: Run the actions without prompting for user confirmation")
-	sys.exit(1)
-
-#def usage	
-		
 if __name__ == '__main__':
 
-	if os.geteuid() != 0:
-		print("   [Wifi-GVA-Control]: You need be root!")
-		sys.exit(1)
+    if os.geteuid() != 0:
+        print("   [Wifi-GVA-Control]: You need be root!")
+        sys.exit(1)
 
-	args = arguments.Args().copy
-	mode=False
-	debug=False
-	wifiOption="WIFI_EDU"
-	password=""
-	confirmPassword=""
+    parser = argparse.ArgumentParser(add_help=False)
 
-	if args.contains(["-h","--help"]) or len(args.all) == 0 :
-		usage()		
-	if args.contains(["-u","--unattended"]):
-		mode=True
-		index = args.first(["-u","--unattended"])
-		args.pop(index)
+    def custom_print_help():
+        help_text = (
+            "Usage:\n"
+            "    lliurex-wifi-gva-control-cli [FLAGS...] ACTION\n\n"
+            "Actions:\n"
+            "    currentconfig:         Shows information about current Wifi GVA configuration\n"
+            "    enablewifi             WIFI_EDU|ALUMNAT <PASSWORD> <CONFIRM_PASSWORD>: Activate automatic connection to Wifi GVA\n"
+            "    disablewifi:           Disable automatic connection to the Wifi GVA\n"
+            "    showalumnatpassword:   Show current password for alumnat user\n"
+            "    updatealumnatpassword  <PASSWORD> <CONFIRM_PASSWORD>: Update the password for alumnat user\n"
+            "    removealumnatpassword: Delete the password for user alumnat\n"
+            "    n4dupdatepassword      <ENCODED_PASSWORD>: Update password for alumnat user with n4d-oneshot\n\n"
+            "Flags:\n"
+            "    -h, --help             Show help\n"
+            "    -u, --unattended       Run the actions without prompting for user confirmation"
+        )
+        print(help_text)
 
-	action = args.pop(0)
-	
-	if action=="enablewifi":
-		if len(args)>0:
-			wifiOption=args.all[0]
-			try:
-				password=args.all[1]
-				confirmPassword=args.all[2]
-			except:
-				pass
-	elif action=="updatealumnatpassword":
-		if len(args)>0:
-			password=args.all[0]
-			try:
-				confirmPassword=args.all[1]
-			except:
-				usage()
-		else:
-			usage()
-	elif action=="n4dupdatepassword":
-		if len(args)>0:
-			password=args.all[0]
-		else:
-			usage()
+    parser.print_help = custom_print_help
 
-	wc=WifiGvaControlCliManager(mode)
-	
-	if action == "currentconfig":
-		sys.exit(wc.showCurrentConfig())
-	elif action=="enablewifi":
-		sys.exit(wc.enableWifi(wifiOption,password,confirmPassword))
-	elif action=="disablewifi":
-		sys.exit(wc.disableWifi())
-	elif action=="showalumnatpassword":
-		sys.exit(wc.showAlumnatPassword())
-	elif action=="updatealumnatpassword":
-		sys.exit(wc.updateAlumnatPassword(password,confirmPassword))
-	elif action=="removealumnatpassword":
-		sys.exit(wc.removeAlumnatPassword())
-	elif action=="n4dupdatepassword":
-		sys.exit(wc.n4dUpdatePassword(password))
-	else:
-		usage()		
+    def custom_error(message):
+        print(f"Error: {message}\n", file=sys.stderr)
+        parser.print_help()
+        sys.exit(2)
+
+    parser.error = custom_error
+
+    class HelpAction(argparse.Action):
+        def __call__(self, parser, namespace, values, option_string=None):
+            parser.print_help()
+            sys.exit(0)
+
+    parser.add_argument("-h", "--help", action=HelpAction, nargs=0)
+
+    mode=False
+    args_list=sys.argv[1:]
+
+    if "-u" in args_list:
+        mode=True
+        args_list.remove("-u")
+
+    elif "unattended" in args_list:
+        mode=True
+        args_list.remove("--unattended")
+
+    parent_parser = argparse.ArgumentParser(add_help=False)
+    parent_parser.add_argument("-u", "--unattended", action="store_true")
+
+    parser.add_argument("-u", "--unattended", action="store_true")
+
+    VALID_ACTIONS = [
+        "currentconfig", "enablewifi", "disablewifi", "showalumnatpassword",
+        "updatealumnatpassword", "removealumnatpassword", "n4dupdatepassword"
+    ]
+
+    user_args = [arg for arg in sys.argv[1:] if arg not in ["-h", "--help", "-u", "--unattended"]]
+
+    if user_args:
+        potential_action = user_args[0]
+        if potential_action not in VALID_ACTIONS:
+            print(f"Error: Invalid action or unknown parameter: '{potential_action}'\n", file=sys.stderr)
+            parser.print_help()
+            sys.exit(2)
+
+    subparsers = parser.add_subparsers(dest="action", required=True)
+
+    subparsers.add_parser("currentconfig", parents=[parent_parser])
+
+    parser_enable = subparsers.add_parser("enablewifi", parents=[parent_parser])
+    parser_enable.add_argument("wifi_option", choices=["WIFI_EDU", "ALUMNAT"], nargs="?", default="WIFI_EDU")
+    parser_enable.add_argument("password", nargs="?", default="")
+    parser_enable.add_argument("confirm_password", nargs="?", default="")
+
+    subparsers.add_parser("disablewifi", parents=[parent_parser])
+    subparsers.add_parser("showalumnatpassword", parents=[parent_parser])
+
+    parser_update = subparsers.add_parser("updatealumnatpassword", parents=[parent_parser])
+    parser_update.add_argument("password")
+    parser_update.add_argument("confirm_password")
+
+    subparsers.add_parser("removealumnatpassword", parents=[parent_parser])
+
+    parser_n4d = subparsers.add_parser("n4dupdatepassword", parents=[parent_parser])
+    parser_n4d.add_argument("encoded_password")
+
+    try:
+        args = parser.parse_args()
+    except argparse.ArgumentError:
+        parser.print_help()
+        sys.exit(1)
+
+    wc = WifiGvaControlCliManager(mode)
+
+    if args.action == "currentconfig":
+        sys.exit(wc.showCurrentConfig())
+
+    elif args.action == "enablewifi":
+        sys.exit(wc.enableWifi(args.wifi_option, args.password, args.confirm_password))
+
+    elif args.action == "disablewifi":
+        sys.exit(wc.disableWifi())
+
+    elif args.action == "showalumnatpassword":
+        sys.exit(wc.showAlumnatPassword())
+
+    elif args.action == "updatealumnatpassword":
+        sys.exit(wc.updateAlumnatPassword(args.password, args.confirm_password))
+
+    elif args.action == "removealumnatpassword":
+        sys.exit(wc.removeAlumnatPassword())
+
+    elif args.action == "n4dupdatepassword":
+        sys.exit(wc.n4dUpdatePassword(args.encoded_password))
