@@ -124,6 +124,7 @@ Rectangle{
                     horizontalAlignment:TextInput.AlignLeft
                     focus:true
                     text:wifiControlBridge.currentPassword
+                    enabled:autoLoginOption.checked
                     readOnly:!wifiControlBridge.passwordEntryEnabled
                     implicitWidth:200
                     echoMode:TextInput.Password

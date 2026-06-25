@@ -68,10 +68,8 @@ Popup {
 
         switch (code){
             case 30:
-                return i18nd("lliurex-wifi-gva-control", "Checking data. Wait a moment...")
-            case 31:
                 return i18nd("lliurex-wifi-gva-control", "Apply changes. Wait a moment...")
-            case 32:
+            case 31:
                 return i18nd("lliurex-wifi-gva-control", "Restoring previous values. Wait a moment...")
             default:
                 return ""

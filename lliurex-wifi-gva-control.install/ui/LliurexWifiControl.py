@@ -10,9 +10,8 @@ import N4dManager
 
 signal.signal(signal.SIGINT, signal.SIG_DFL)
 
-CHECK_DATA=30
-SAVE_DATA=31
-RESTORE_DATA=32
+SAVE_DATA=30
+RESTORE_DATA=31
 
 class GatherInfo(QThread):
 
