@@ -2,72 +2,78 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 import QtQuick.Dialogs 1.3
+import org.kde.kirigami 2.16 as Kirigami
 
 
 Dialog {
     id: customDialog
-    property alias dialogTitle:customDialog.title
-    property alias dialogVisible:customDialog.visible
-    property alias dialogMsg:dialogText.text
-    property alias btnAcceptVisible:dialogApplyBtn.visible
-    property alias btnDiscardVisible:dialogDiscardBtn.visible
-    property alias btnDiscardText:dialogDiscardBtn.text
-    property alias btnDiscardIcon:dialogDiscardBtn.icon.name
-    property alias btnCancelText:dialogCancelBtn.text
-    property alias btnCancelIcon:dialogCancelBtn.icon.name
-    signal dialogApplyClicked
-    signal discardDialogClicked
-    signal cancelDialogClicked
+    property bool dialogVisible: false
+    property string dialogTitle:""
+    property string dialogMsg: ""
+    property bool btnAcceptVisible: true
+    property string btnAcceptText: ""
+    property string btnDiscardText: ""
+    property bool btnDiscardVisible: true
+    property string btnDiscardIcon: ""
+    property string btnCancelText: ""
+    property string btnCancelIcon: ""
 
-    visible:dialogVisible
-    title:dialogTitle
-    modality:Qt.WindowModal
+    signal dialogApplyClicked()
+    signal discardDialogClicked()
+    signal rejectDialogClicked()
+
+    title: customDialog.dialogTitle
+    modality: Qt.WindowModal
+    visible:customDialog.dialogVisible
 
     contentItem: Rectangle {
         color: "#ebeced"
-        implicitWidth: 420
-        implicitHeight: 105
-        anchors.topMargin:5
-        anchors.leftMargin:5
+        implicitWidth: 460
+        implicitHeight: 115
 
-        Image{
-            id:dialogIcon
-            source:"/usr/share/icons/breeze/status/64/dialog-warning.svg"
 
-        }
-        
-        Text {
-            id:dialogText
-            text:dialogMsg
-            font.family: "Quattrocento Sans Bold"
-            font.pointSize: 10
-            width:330
-            wrapMode:Text.WordWrap
-            anchors.left:dialogIcon.right
-            anchors.verticalCenter:dialogIcon.verticalCenter
-            anchors.leftMargin:10
-        
+        RowLayout {
+            id: contentLayout
+            anchors.top: parent.top
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.margins: 0
+            spacing: 15
+
+            Kirigami.Icon {
+                id: dialogIcon
+                source: "dialog-warning"
+                Layout.preferredWidth: 64
+                Layout.preferredHeight: 64
+                visible: status === Image.Ready
+            }
+
+            Text {
+                id: dialogText
+                text: customDialog.dialogMsg
+                font.pointSize: 10
+                Layout.fillWidth: true
+                Layout.rightMargin:10
+                wrapMode: Text.WordWrap
+            }
         }
       
         DialogButtonBox {
-            buttonLayout:DialogButtonBox.KdeLayout
-            anchors.bottom:parent.bottom
-            anchors.right:parent.right
-            anchors.topMargin:15
+            buttonLayout: DialogButtonBox.KdeLayout
+            anchors.bottom: parent.bottom
+            anchors.right: parent.right
+            anchors.margins: 10
 
             Button {
                 id:dialogApplyBtn
                 display:AbstractButton.TextBesideIcon
-                icon.name:"dialog-ok.svg"
+                icon.name:"dialog-ok"
                 text: i18nd("lliurex-wifi-gva-control","Apply")
                 visible: btnAcceptVisible 
                 focus:true
-                font.family: "Quattrocento Sans Bold"
                 font.pointSize: 10
                 DialogButtonBox.buttonRole: DialogButtonBox.ApplyRole
-                Keys.onReturnPressed: dialogApplyBtn.clicked()
-                Keys.onEnterPressed: dialogApplyBtn.clicked()
-
+                onClicked: customDialog.dialogApplyClicked()
             }
 
             Button {
@@ -77,13 +83,9 @@ Dialog {
                 text:btnDiscardText
                 visible:btnDiscardVisible
                 focus:true
-                font.family: "Quattrocento Sans Bold"
                 font.pointSize: 10
                 DialogButtonBox.buttonRole: DialogButtonBox.DestructiveRole
-                Keys.onReturnPressed: dialogDiscardBtn.clicked()
-                Keys.onEnterPressed: dialogDiscardBtn.clicked()
-
-
+                onClicked: customDialog.discardDialogClicked()
             }
 
             Button {
@@ -92,25 +94,14 @@ Dialog {
                 icon.name:btnCancelIcon
                 text:btnCancelText 
                 focus:true
-                font.family: "Quattrocento Sans Bold"
                 font.pointSize: 10
                 DialogButtonBox.buttonRole:DialogButtonBox.RejectRole
-                Keys.onReturnPressed: dialogCancelBtn.clicked()
-                Keys.onEnterPressed: dialogCancelBtn.clicked()
+                onClicked: {
+                    customDialog.rejectDialogClicked()
+                }
         
             }
-
-            onApplied:{
-                dialogApplyClicked()
-            }
-
-            onDiscarded:{
-                discardDialogClicked()
-            }
-
-            onRejected:{
-                cancelDialogClicked()
-            }
         }
+
     }
  }

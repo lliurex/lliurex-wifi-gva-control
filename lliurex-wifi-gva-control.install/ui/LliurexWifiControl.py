@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 
-from PySide2.QtCore import QObject,Signal,Slot,QThread,Property,QTimer,Qt,QModelIndex
+from PySide2.QtCore import QObject,Signal,Slot,QThread,Property,QTimer,Qt,QModelIndex,QUrl
+from PySide2.QtGui import QDesktopServices
 import os
 import threading
 import signal
@@ -10,18 +11,25 @@ import N4dManager
 
 signal.signal(signal.SIGINT, signal.SIG_DFL)
 
+SAVE_DATA=30
+RESTORE_DATA=31
+
 class GatherInfo(QThread):
 
-	def __init__(self,*args):
+	infoGathered=Signal(dict)
 
-		QThread.__init__(self)
+	def __init__(self,manager):
+
+		super().__init__()
+		self.manager=manager
 	
 	#def __init__
 		
 	def run(self,*args):
 		
-		time.sleep(1)
-		self.ret=LliurexWifiControl.n4dMan.loadConfig()
+		time.sleep(0.2)
+		ret=self.manager.loadConfig()
+		self.infoGathered.emit(ret)
 
 	#def run
 
@@ -29,19 +37,22 @@ class GatherInfo(QThread):
 
 class UpdateInfo(QThread):
 
-	def __init__(self,*args):
+	infoUpdated=Signal(dict)
 
-		QThread.__init__(self)
+	def __init__(self,manager,info, confirmPasswordEntry):
 
-		self.updateInfo=args[0]
-		self.ret=[]
+		super().__init__()
+		self.manager=manager
+		self.updateInfo=info
+		self.confirmPasswordEntry=confirmPasswordEntry
 
 	#def __init__
 
 	def run(self,*args):
 		
 		time.sleep(1)
-		self.ret=LliurexWifiControl.n4dMan.applyChanges(self.updateInfo)
+		ret=self.manager.applyChanges(self.updateInfo,self.confirmPasswordEntry)
+		self.infoUpdated.emit(ret)
 	
 	#def run
 
@@ -49,22 +60,294 @@ class UpdateInfo(QThread):
 
 class LliurexWifiControl(QObject):
 
-	n4dMan=N4dManager.N4dManager()
+	currentStackChanged=Signal()
+	currentOptionsStackChanged=Signal()
+	showSpinnerChanged=Signal()
+	isWifiEnabledChanged=Signal()
+	currentWifiOptionChanged=Signal()
+	currentPasswordChanged=Signal()
+	passwordEntryEnabledChanged=Signal()
+	showEditPasswordBtnChanged=Signal()
+	showConfirmPasswordChanged=Signal()
+	showClearPasswordBtnChanged=Signal()
+	changesInWifiSettingsChanged=Signal()
+	showSettingsMessageChanged=Signal()
+	showChangesDialogChanged=Signal()
+	showCDCWarningChanged=Signal()
+	showPopUpChanged=Signal()
+	closeGuiChanged=Signal()
 
 	def __init__(self,ticket=None):
 
-		QObject.__init__(self)
+		super().__init__()
 		self.initBridge(ticket)
 
 	#def __init__
 
+	@Property(int,notify=currentStackChanged)
+	def currentStack(self):
+
+		return self._currentStack
+
+	#def currentStack
+
+	@currentStack.setter
+	def currentStack(self,currentStack):
+
+		if self._currentStack!=currentStack:
+			self._currentStack=currentStack
+			self.currentStackChanged.emit()
+
+	#def currentStack
+
+	@Property(int, notify=currentOptionsStackChanged)
+	def currentOptionsStack(self):
+
+		return self._currentOptionsStack
+
+	#def currentOptionsStack
+
+	@currentOptionsStack.setter
+	def currentOptionsStack(self,currentOptionsStack):
+
+		if self._currentOptionsStack!=currentOptionsStack:
+			self._currentOptionsStack=currentOptionsStack
+			self.currentOptionsStackChanged.emit()
+
+	#def currentOptionsStack
+
+	@Property(bool,notify=showSpinnerChanged)
+	def showSpinner(self):
+
+		return self._showSpinner
+
+	#def showSpinner
+
+	@showSpinner.setter
+	def showSpinner(self,showSpinner):
+
+		if self._showSpinner!=showSpinner:
+			self._showSpinner=showSpinner
+			self.showSpinnerChanged.emit()
+
+	#def showSpinner
+
+	@Property(bool,notify=isWifiEnabledChanged)
+	def isWifiEnabled(self):
+
+		return self._isWifiEnabled
+
+	#def isWifiEnabled
+
+	@isWifiEnabled.setter
+	def isWifiEnabled(self,isWifiEnabled):
+
+		if self._isWifiEnabled!=isWifiEnabled:
+			self._isWifiEnabled=isWifiEnabled
+			self.isWifiEnabledChanged.emit()
+
+	#def isWifiEnabled
+
+	@Property(int,notify=currentWifiOptionChanged)
+	def currentWifiOption(self):
+
+		return self._currentWifiOption
+
+	#def currentWifiOption
+
+	@currentWifiOption.setter
+	def currentWifiOption(self,currentWifiOption):
+
+		if self._currentWifiOption!=currentWifiOption:
+			self._currentWifiOption=currentWifiOption
+			self.currentWifiOptionChanged.emit()
+
+	#def currentWifiOption
+
+	@Property(str,notify=currentPasswordChanged)
+	def currentPassword(self):
+
+		return self._currentPassword
+
+	#def currentPassword
+
+	@currentPassword.setter
+	def currentPassword(self,currentPassword):
+
+		if self._currentPassword!=currentPassword:
+			self._currentPassword=currentPassword
+			self.currentPasswordChanged.emit()
+
+	#def currentPassword
+
+	@Property(bool,notify=passwordEntryEnabledChanged)
+	def passwordEntryEnabled(self):
+
+		return self._passwordEntryEnabled
+
+	#def passwordEntryEnabled
+
+	@passwordEntryEnabled.setter
+	def passwordEntryEnabled(self,passwordEntryEnabled):
+
+		if self._passwordEntryEnabled!=passwordEntryEnabled:
+			self._passwordEntryEnabled=passwordEntryEnabled
+			self.passwordEntryEnabledChanged.emit()
+
+	#def passwordEntryEnabled
+
+	@Property(bool,notify=showEditPasswordBtnChanged)
+	def showEditPasswordBtn(self):
+
+		return self._showEditPasswordBtn
+
+	#def showEditPasswordBtn
+
+	@showEditPasswordBtn.setter
+	def showEditPasswordBtn(self,showEditPasswordBtn):
+
+		if self._showEditPasswordBtn!=showEditPasswordBtn:
+			self._showEditPasswordBtn=showEditPasswordBtn
+			self.showEditPasswordBtnChanged.emit()
+
+	#def showEditPasswordBtn
+
+	@Property(bool,notify=showConfirmPasswordChanged)
+	def showConfirmPassword(self):
+
+		return self._showConfirmPassword
+
+	#def showConfirmPassword
+
+	@showConfirmPassword.setter
+	def showConfirmPassword(self,showConfirmPassword):
+
+		if self._showConfirmPassword!=showConfirmPassword:
+			self._showConfirmPassword=showConfirmPassword
+			self.showConfirmPasswordChanged.emit()
+
+	#def showConfirmPassword
+
+	@Property(bool,notify=showClearPasswordBtnChanged)
+	def showClearPasswordBtn(self):
+
+		return self._showClearPasswordBtn
+
+	#def showClearPasswordBtn
+
+	@showClearPasswordBtn.setter
+	def showClearPasswordBtn(self,showClearPasswordBtn):
+
+		if self._showClearPasswordBtn!=showClearPasswordBtn:
+			self._showClearPasswordBtn=showClearPasswordBtn
+			self.showClearPasswordBtnChanged.emit()
+
+	#def showClearPasswordBtn
+
+	@Property(bool,notify=changesInWifiSettingsChanged)
+	def changesInWifiSettings(self):
+
+		return self._changesInWifiSettings
+
+	#def changesInWifiSettings
+
+	@changesInWifiSettings.setter
+	def changesInWifiSettings(self,changesInWifiSettings):
+
+		if self._changesInWifiSettings!=changesInWifiSettings:
+			self._changesInWifiSettings=changesInWifiSettings
+			self.changesInWifiSettingsChanged.emit()
+
+	#def changesInWifiSettings
+
+	@Property('QVariant',notify=showSettingsMessageChanged)
+	def showSettingsMessage(self):
+
+		return self._showSettingsMessage
+
+	#def showSettingsMessage
+
+	@showSettingsMessage.setter
+	def showSettingsMessage(self,showSettingsMessage):
+
+		if self._showSettingsMessage!=showSettingsMessage:
+			self._showSettingsMessage=showSettingsMessage
+			self.showSettingsMessageChanged.emit()
+
+	#def showSettingsMessage
+
+	@Property(bool,notify=showChangesDialogChanged)
+	def showChangesDialog(self):
+
+		return self._showChangesDialog
+
+	#def showChangesDialog
+
+	@showChangesDialog.setter
+	def showChangesDialog(self,showChangesDialog):
+
+		if self._showChangesDialog!=showChangesDialog:
+			self._showChangesDialog=showChangesDialog
+			self.showChangesDialogChanged.emit()
+
+	#def showChangesDialog
+
+	@Property(bool,notify=showCDCWarningChanged)
+	def showCDCWarning(self):
+
+		return self._showCDCWarning
+
+	#def showCDCWarning
+
+	@showCDCWarning.setter
+	def showCDCWarning(self,showCDCWarning):
+
+		if self._showCDCWarning!=showCDCWarning:
+			self._showCDCWarning=showCDCWarning
+			self.showCDCWarningChanged.emit()
+
+	#def _showCDCWarning
+
+	@Property('QVariant',notify=showPopUpChanged)
+	def showPopUp(self):
+
+		return self._showPopUp
+
+	#def showPopUp	
+
+	@showPopUp.setter
+	def showPopUp(self,showPopUp):
+		
+		if self._showPopUp!=showPopUp:
+			self._showPopUp=showPopUp		
+			self.showPopUpChanged.emit()
+
+	#def showPopUp
+
+	@Property(bool, notify=closeGuiChanged)
+	def closeGui(self):
+
+		return self._closeGui
+
+	#def closeGui	
+
+	@closeGui.setter
+	def closeGui(self,closeGui):
+		
+		if self._closeGui!=closeGui:
+			self._closeGui=closeGui		
+			self.closeGuiChanged.emit()
+
+	#def _closeGui
+
 	def initBridge(self,ticket):
 
-		self._settingsWifiChanged=False
-		self._showSettingsMessage=[False,"","Success"]
+		self.n4dMan=N4dManager.N4dManager()
+		self._changesInWifiSettings=False
+		self._showSettingsMessage={"show":False,"msgCode":"","type":""}
 		self._showChangesDialog=False
 		self._closeGui=False
-		self._closePopUp=True
+		self._showPopUp={"show":False,"msgCode":""}
 		self._currentStack=0
 		self._currentOptionsStack=0
 		self._isWifiEnabled=False
@@ -73,320 +356,74 @@ class LliurexWifiControl(QObject):
 		self._passwordEntryEnabled=False
 		self._showConfirmPassword=False
 		self._showEditPasswordBtn=False
-		self._errorInPassword=False
 		self._showSpinner=True
 		self._showClearPasswordBtn=False
 		self._showCDCWarning=False
-		self.changeInActivation=False
-		self.changeInOption=False
-		self.changeInPassword=False
-		self.initialPassword=True
 		self.passwordCleared=False
-		LliurexWifiControl.n4dMan.setServer(ticket)
-		self.gatherInfo=GatherInfo()
-		self.gatherInfo.start()
-		self.gatherInfo.finished.connect(self._loadConfig)
+		self.n4dMan.setServer(ticket)
+		self.gatherInfoT=GatherInfo(self.n4dMan)
+		self.gatherInfoT.start()
+		self.gatherInfoT.infoGathered.connect(self._loadConfig)
+		self.gatherInfoT.finished.connect(self.gatherInfoT.deleteLater)
 
 	#def initBridge
 
-	def _loadConfig(self):		
+	@Slot(dict)
+	def _loadConfig(self,ret):		
 
-		if self.gatherInfo.ret:
-			self.isWifiEnabled=copy.deepcopy(LliurexWifiControl.n4dMan.isWifiEnabled)
-			self.currentWifiOption=copy.deepcopy(LliurexWifiControl.n4dMan.currentWifiOption)
-			self.currentPassword=copy.deepcopy(LliurexWifiControl.n4dMan.currentPassword)
-			self.initialPassword=True
-			self.errorInPassword=False
-			self.passwordEntryEnabled=False
-			self.showSettingsMessage=[False,"","Success"]
-			self.showClearPasswordBtn=False
-			self.passwordCleared=False
-
-			if self.isWifiEnabled and self.currentWifiOption==3:
-				if self.currentPassword=="":
-					self.passwordEntryEnabled=True
-					self.errorInPassword=True
-					self.initialPassword=False
-					self.showSettingsMessage=[True,LliurexWifiControl.n4dMan.ERROR_PASSWORD_EMPTY,"Error"]
-				else:
-					self.showEditPasswordBtn=True
-			else:
-				if self.isWifiEnabled and not LliurexWifiControl.n4dMan.getIntegrationCDCStatus():
-					self.showSettingsMessage=[True,LliurexWifiControl.n4dMan.WARNING_CDC_ACTIVATION_REQUIRED,"Warning"]
-
-				self._manageClearPasswordBtn()
-
-			self.currentStack=1
-		else:
+		if not ret.get("status"):
 			if self.currentStack==0:
 				self.showSpinner=False
 			else:
-				self.showSettingsMessage=[True,LliurexWifiControl.n4dMan.ERROR_LOADING_CONFIGURATION,"Error"]
+				self.showSettingsMessage={"show":True,"msgCode":ret.get("code"),"type":ret.get("type")}
+		else:
+			self._loadVars()
+			self.currentStack=1
 
 	#def _loadConfig
 
+	def _loadVars(self):
+
+		self.isWifiEnabled=self.n4dMan.isWifiEnabled
+		self.currentWifiOption=self.n4dMan.currentWifiOption
+		self.currentPassword=self.n4dMan.currentPassword
+		self.currentWifiSettings=copy.deepcopy(self.n4dMan.currentWifiSettings)
+		self.confirmPasswordEntry=""
+		self.passwordEntryEnabled=False
+		self.showClearPasswordBtn=False
+		self.showEditPasswordBtn=False
+		self.passwordCleared=False
+
+		if self.isWifiEnabled and self.currentWifiOption==3:
+			if not self.currentPassword:
+				self.passwordEntryEnabled=True
+				self.showConfirmPassword=True
+			else:
+				self.showEditPasswordBtn=True
+		else:
+			if self.isWifiEnabled and not self.n4dMan.getIntegrationCDCStatus():
+				self.showSettingsMessage={"show":True,"msgCode":self.n4dMan.WARNING_CDC_ACTIVATION_REQUIRED,"type":self.n4dMan.KIRIGAMI_MSG_WARNING}
+			
+			self._manageClearPasswordBtn()
+
+	#def _loadVars
+
 	def _manageClearPasswordBtn(self):
 
-		if self.currentPassword!="":
-			if self.currentWifiOption!=3 or not self.isWifiEnabled:
-				self.showClearPasswordBtn=True
-			else:
-				self.showClearPasswordBtn=False
-		else:
-			self.showClearPasswordBtn=False
+		hasPassword=bool(self.currentPassword)
+		notOption3OrDisabled=(self.currentWifiOption!=3 or not self.isWifiEnabled)
+		
+		self.showClearPasswordBtn=hasPassword and notOption3OrDisabled
 
 	#def _manageClearPasswordBtn
-
-	def _getCurrentStack(self):
-
-		return self._currentStack
-
-	#def _getCurrentStack
-
-	def _setCurrentStack(self,currentStack):
-
-		if self._currentStack!=currentStack:
-			self._currentStack=currentStack
-			self.on_currentStack.emit()
-
-	#def _setCurrentStack
-
-	def _getCurrentOptionsStack(self):
-
-		return self._currentOptionsStack
-
-	#def _getCurrentOptionsStack
-
-	def _setCurrentOptionsStack(self,currentOptionsStack):
-
-		if self._currentOptionsStack!=currentOptionsStack:
-			self._currentOptionsStack=currentOptionsStack
-			self.on_currentOptionsStack.emit()
-
-	#def _setCurrentOptionsStack
-
-	def _getShowSpinner(self):
-
-		return self._showSpinner
-
-	#def _getShowSpinner
-
-	def _setShowSpinner(self,showSpinner):
-
-		if self._showSpinner!=showSpinner:
-			self._showSpinner=showSpinner
-			self.on_showSpinner.emit()
-
-	#def _setShowSpinner
-
-	def _getIsWifiEnabled(self):
-
-		return self._isWifiEnabled
-
-	#def _getIsWifiEnabled
-
-	def _setIsWifiEnabled(self,isWifiEnabled):
-
-		if self._isWifiEnabled!=isWifiEnabled:
-			self._isWifiEnabled=isWifiEnabled
-			self.on_isWifiEnabled.emit()
-
-	#def _setIsWifiEnabled
-
-	def _getCurrentWifiOption(self):
-
-		return self._currentWifiOption
-
-	#def _getCurrentWifiOption
-
-	def _setCurrentWifiOption(self,currentWifiOption):
-
-		if self._currentWifiOption!=currentWifiOption:
-			self._currentWifiOption=currentWifiOption
-			self.on_currentWifiOption.emit()
-
-	#def _setCurrentWifiOption
-
-	def _getCurrentPassword(self):
-
-		return self._currentPassword
-
-	#def _getCurrentPassword
-
-	def _setCurrentPassword(self,currentPassword):
-
-		if self._setCurrentPassword!=currentPassword:
-			self._currentPassword=currentPassword
-			self.on_currentPassword.emit()
-
-	#def _setCurrentPassword
-
-	def _getPasswordEntryEnabled(self):
-
-		return self._passwordEntryEnabled
-
-	#def _getPasswordEntryEnabled
-
-	def _setPasswordEntryEnabled(self,passwordEntryEnabled):
-
-		if self._passwordEntryEnabled!=passwordEntryEnabled:
-			self._passwordEntryEnabled=passwordEntryEnabled
-			self.on_passwordEntryEnabled.emit()
-
-	#def _setPasswordEntryEnabled
-
-	def _getShowEditPasswordBtn(self):
-
-		return self._showEditPasswordBtn
-
-	#def _getShowEditPasswordBtn
-
-	def _setShowEditPasswordBtn(self,showEditPasswordBtn):
-
-		if self._showEditPasswordBtn!=showEditPasswordBtn:
-			self._showEditPasswordBtn=showEditPasswordBtn
-			self.on_showEditPasswordBtn.emit()
-
-	#def _setShowEditPasswordBtn
-
-	def _getShowConfirmPassword(self):
-
-		return self._showConfirmPassword
-
-	#def _getShowConfirmPassword
-
-	def _setShowConfirmPassword(self,showConfirmPassword):
-
-		if self._showConfirmPassword!=showConfirmPassword:
-			self._showConfirmPassword=showConfirmPassword
-			self.on_showConfirmPassword.emit()
-
-	#def _setShowConfirmPassword
-
-	def _getShowClearPasswordBtn(self):
-
-		return self._showClearPasswordBtn
-
-	#def _getShowClearPasswordBtn
-
-	def _setShowClearPasswordBtn(self,showClearPasswordBtn):
-
-		if self._showClearPasswordBtn!=showClearPasswordBtn:
-			self._showClearPasswordBtn=showClearPasswordBtn
-			self.on_showClearPasswordBtn.emit()
-
-	#def _setShowClearPasswordBtn
-
-	def _getErrorInPassword(self):
-
-		return self._errorInPassword
-
-	#def _getErrorInPassword
-
-	def _setErrorInPassword(self,errorInPassword):
-
-		if self._errorInPassword!=errorInPassword:
-			self._errorInPassword=errorInPassword
-			self.on_errorInPassword.emit()
-
-	#def _setErrorInPassword
-	
-	def _getShowSettingsMessage(self):
-
-		return self._showSettingsMessage
-
-	#def _getShowSettingsMessage
-
-	def _setShowSettingsMessage(self,showSettingsMessage):
-
-		if self._showSettingsMessage!=showSettingsMessage:
-			self._showSettingsMessage=showSettingsMessage
-			self.on_showSettingsMessage.emit()
-
-	#def _setShowSettingsMessage
-
-	def _getShowChangesDialog(self):
-
-		return self._showChangesDialog
-
-	#def _showChangesDialog
-
-	def _setShowChangesDialog(self,showChangesDialog):
-
-		if self._showChangesDialog!=showChangesDialog:
-			self._showChangesDialog=showChangesDialog
-			self.on_showChangesDialog.emit()
-
-	#def _setShowChangesDialog
-
-	def _getSettingsWifiChanged(self):
-
-		return self._settingsWifiChanged
-
-	#def _getSettingsWifiChanged
-
-	def _setSettingsWifiChanged(self,settingsWifiChanged):
-
-		if self._settingsWifiChanged!=settingsWifiChanged:
-			self._settingsWifiChanged=settingsWifiChanged
-			self.on_settingsWifiChanged.emit()
-
-	#def _setSettingsWifiChanged
-
-	def _getClosePopUp(self):
-
-		return self._closePopUp
-
-	#def _getClosePopUp	
-
-	def _setClosePopUp(self,closePopUp):
-		
-		if self._closePopUp!=closePopUp:
-			self._closePopUp=closePopUp		
-			self.on_closePopUp.emit()
-
-	#def _setClosePopUp	
-
-	def _getCloseGui(self):
-
-		return self._closeGui
-
-	#def _getCloseGui	
-
-	def _setCloseGui(self,closeGui):
-		
-		if self._closeGui!=closeGui:
-			self._closeGui=closeGui		
-			self.on_closeGui.emit()
-
-	#def _setCloseGui
-
-	def _getShowCDCWarning(self):
-
-		return self._showCDCWarning
-
-	#def _getShowCDCWarning
-
-	def _setShowCDCWarning(self,showCDCWarning):
-
-		if self._showCDCWarning!=showCDCWarning:
-			self._showCDCWarning=showCDCWarning
-			self.on_showCDCWarning.emit()
-
-	#def _setShowCDCWarning
 
 	@Slot(bool)
 	def manageWifiControl(self,value):
 
-		self.showSettingsMessage=[False,"","Success"]
+		self.showSettingsMessage={"show":False,"msgCode":"","type":""}
 		if value!=self.isWifiEnabled:
 			self.isWifiEnabled=value
-			if self.isWifiEnabled!=LliurexWifiControl.n4dMan.isWifiEnabled:
-				self.changeInActivation=True
-			else:
-				self.changeInActivation=False
-		else:
-			self.changeInActivation=False
+			self.currentWifiSettings["isWifiEnabled"]=value
 
 		self._manageChanges()
 		self._undoChangesInPassword()
@@ -397,16 +434,11 @@ class LliurexWifiControl(QObject):
 	@Slot(int)
 	def manageWifiOptions(self,value):
 
-		self.showSettingsMessage=[False,"","Success"]
+		self.showSettingsMessage={"show":False,"msgCode":"","type":""}
 
 		if value!=self.currentWifiOption:
 			self.currentWifiOption=value
-			if self.currentWifiOption!=LliurexWifiControl.n4dMan.currentWifiOption:
-				self.changeInOption=True
-			else:
-				self.changeInOption=False
-		else:
-			self.changeInOption=False
+			self.currentWifiSettings["currentWifiOption"]=value
 
 		self._manageChanges()
 		self._undoChangesInPassword()
@@ -414,180 +446,117 @@ class LliurexWifiControl(QObject):
 
 	#def manageWifiOptions
 	
-	@Slot('QVariantList')
+	@Slot('QJSValue')
 	def changeInConfirmPasswordEntry(self,value):
 
-		if not self.initialPassword and self.passwordEntryEnabled:
-			self._managePassword(value)
+		if hasattr(value,'toVariant'):
+			value=value.toVariant()
+
+		if self.passwordEntryEnabled:
+			self.confirmPasswordEntry=value.get("confirmPassword")
 	
 	#def changeInConfirmPasswordEntry
 
-	@Slot('QVariantList')
+	@Slot('QJSValue')
 	def changeInPasswordEntry(self,value):
 
-		matchError=False
+		if hasattr(value,'toVariant'):
+			value=value.toVariant()
 
-		if not self.initialPassword:
-			self.showConfirmPassword=True
-			if value[0]!="":
-				self._managePassword(value)
-			else:
-				matchError=True
-		else:
-			if value[0]=="":
-				if self.isWifiEnabled and self.currentWifiOption==3:
-					matchError=True
-			
-		if matchError:
-			self.errorInPassword=True
-			self.showSettingsMessage=[False,"","Success"]
+		if value.get("password")!=self.currentPassword:
+			self.currentPassword=value.get("password")
+			self.currentWifiSettings["currentPassword"]=value.get("password")
 
-		self.initialPassword=False
+		self._manageChanges()
 
 	#def changeInPasswordEntry
-
-	def _managePassword(self,value):
-
-		if value[0]!=value[1]:
-			if value[1]!="" and value[0]!="":
-				self.showSettingsMessage=[True,LliurexWifiControl.n4dMan.ERROR_PASSWORDS_NOT_MATCH,"Error"]
-			else:
-				self.showSettingsMessage=[False,"","Success"]
-			
-			self.errorInPassword=True
-		else:
-			if value[0]!="":
-				self.showSettingsMessage=[False,"","Success"]
-				self.errorInPassword=False
-				if value[0]!=self.currentPassword:
-					self.currentPassword=value[0]
-					if self.currentPassword!=LliurexWifiControl.n4dMan.currentPassword:
-						self.changeInPassword=True
-					else:
-						self.changeInPassword=False
-				else:
-					self.changeInPassword=False
-					
-			self._manageChanges()
-
-	#def _managePassword
 
 	@Slot()
 	def editPasswordBtn(self):
 
 		if self.currentWifiOption==3:
 			self.passwordEntryEnabled=not self.passwordEntryEnabled
-			self.initialPassword=False
+			self.showConfirmPassword=not self.showConfirmPassword
+
+		if not self.passwordEntryEnabled:
+			self._undoChangesInPassword()
 
 	#def editPasswordBtn
 
 	def _manageChanges(self):
 
-		if self.changeInActivation:
-			self.settingsWifiChanged=True
+		if self.currentWifiSettings!=self.n4dMan.currentWifiSettings:
+			self.changesInWifiSettings=True
 		else:
-			if self.isWifiEnabled:
-				if self.changeInOption or self.changeInPassword:
-					self.settingsWifiChanged=True
-				else:
-					self.settingsWifiChanged=False
-			else:
-				if self.changeInPassword and self.passwordCleared:
-					self.settingsWifiChanged=True
-				else:
-					self.settingsWifiChanged=False
-
+			self.changesInWifiSettings=False
+	
 	#def _manageChanges
 
 	def _undoChangesInPassword(self):
 
-		self.initialPassword=True
+		self.showSettingsMessage={"show":False,"msgCode":"","type":""}
 
 		if not self.passwordCleared or self.currentWifiOption==3:
-			self.currentPassword=LliurexWifiControl.n4dMan.currentPassword
-			if self.passwordCleared:
-				self.passwordCleared=False
+			self.currentPassword=self.n4dMan.currentPassword
+			self.currentWifiSettings["currentPassword"]=self.currentPassword
+			self.confirmPasswordEntry=""
+			self.passwordCleared=False
 
-		self.showSettingsMessage=[False,"","Success"]
-		self.initialPassword=False
-		self.changeInPassword=False
-
-		if not self.isWifiEnabled:
+		if not self.isWifiEnabled or self.currentWifiOption!=3:
 			self.passwordEntryEnabled=False
 			self.showConfirmPassword=False
 			self.showEditPasswordBtn=False
-			self.errorInPassword=False
+			return
+
+		if not self.currentPassword:
+			self.passwordEntryEnabled=True
+			self.showConfirmPassword=True
 		else:
-			if self.currentWifiOption!=3:
-				self.passwordEntryEnabled=False
-				self.showConfirmPassword=False
-				self.showEditPasswordBtn=False
-				self.errorInPassword=False
-			else:
-				if self.currentPassword=="":
-					self.passwordEntryEnabled=True
-					if self.currentPassword!=LliurexWifiControl.n4dMan.currentPassword:
-						self.errorInPassword=True
-						self.showSettingsMessage=[True,LliurexWifiControl.n4dMan.ERROR_PASSWORD_EMPTY,"Error"]
-				else:
-					self.showEditPasswordBtn=True
+			self.showEditPasswordBtn=True
+			self.showConfirmPassword=False
 
 	#def _undoChangesInPassword
 
 	@Slot()
 	def applyChanges(self):
 
-		nextStep=True
-
-		if self.isWifiEnabled:
-			if self.changeInOption and self.currentWifiOption==3:
-				if self.currentPassword=="":
-					self.showSettingsMessage=[True,LliurexWifiControl.n4dMan.ERROR_PASSWORD_EMPTY,"Error"]
-					if self.showChangesDialog:
-						self.showChangesDialog=False
-					nextStep=False
-		if nextStep:
-			self.showSettingsMessage=[False,"","Success"]
-			self.closePopUp=False
-			self.showChangesDialog=False
-			infoToUpdate=[self.isWifiEnabled,self.currentWifiOption,self.currentPassword]
-			self.updateInfoT=UpdateInfo(infoToUpdate)
-			self.updateInfoT.start()
-			self.updateInfoT.finished.connect(self._updateInfoRet)
+		self.showSettingsMessage={"show":False,"msgCode":"","type":""}
+		self.showPopUp={"show":True,"msgCode":SAVE_DATA}
+		self.showChangesDialog=False
+		self.updateInfoT=UpdateInfo(self.n4dMan,self.currentWifiSettings,self.confirmPasswordEntry)
+		self.updateInfoT.start()
+		self.updateInfoT.infoUpdated.connect(self._updateInfoRet)
+		self.updateInfoT.finished.connect(self.updateInfoT.deleteLater)
 
 	#def applyChanges	
 
-	def _updateInfoRet(self):
+	@Slot(dict)
+	def _updateInfoRet(self,ret):
 
-		if self.updateInfoT.ret[0]:
-			self._initForm()
-			self.showSettingsMessage=[True,self.updateInfoT.ret[1],"Success"]
-			if self.isWifiEnabled and self.currentWifiOption!=3: 
-				if not LliurexWifiControl.n4dMan.getIntegrationCDCStatus():
-					self.showCDCWarning=True
-				else:
-					self.closeGui=True
-			else:
-				self.closeGui=True
-		else:
-			self.showSettingsMessage=[True,self.updateInfoT.ret[1],"Error"]
+		self.showPopUp={"show":False,"msgCode":""}
+
+		if not ret.get("status"):
 			self.closeGui=False
+			self.showSettingsMessage={"show":True,"msgCode":ret.get("code"),"type":ret.get("type")}
+			return
+
+		self._initForm()
+		self.showSettingsMessage={"show":True,"msgCode":ret.get("code"),"type":ret.get("type")}
+
+		isCDCMissign=self.isWifiEnabled and self.currentWifiOption!=3 and not self.n4dMan.getIntegrationCDCStatus()
+		if isCDCMissign:
+			self.showCDCWarning=True
+		
+		self.closeGui=True
 
 	#def _updateInfoRet
 
 	def _initForm(self):
 
-		self._loadConfig()
-		self.changeInActivation=False
-		self.settingsWifiChanged=False
+		self._loadVars()
+		self.changesInWifiSettings=False
 		self.showConfirmPassword=False
-		self.changeInPassword=False
-		self.changeInOption=False
-		self.closePopUp=True
-		if self.errorInPassword:
-			self.closeGui=False
-		else:
-			self.closeGui=True
+		self.closeGui=True
 
 	#def _initForm
 
@@ -602,10 +571,11 @@ class LliurexWifiControl(QObject):
 	@Slot()
 	def cancelChanges(self):
 
-		self.closePopUp=False
+		self.showPopUp={"show":True,"msgCode":RESTORE_DATA}
 		self.showChangesDialog=False
-		self.showSettingsMessage=[False,"","Success"]
+		self.showSettingsMessage={"show":False,"msgCode":"","type":""}
 		self._initForm()
+		self.showPopUp={"show":False,"msgCode":""}
 
 	#def cancelChanges
 
@@ -625,9 +595,10 @@ class LliurexWifiControl(QObject):
 	@Slot()
 	def clearPassword(self):
 
-		self.showSettingsMessage=[False,"","Success"]
-		self.initialPassword=True
+		self.showSettingsMessage={"show":False,"msgCode":"","type":""}
 		self.currentPassword=""
+		self.currentWifiSettings["currentPassword"]=""
+		self.confirmPasswordEntry=""
 		self.changeInPassword=True
 		self.passwordCleared=True
 		self.showClearPasswordBtn=False
@@ -646,86 +617,22 @@ class LliurexWifiControl(QObject):
 	@Slot()
 	def openHelp(self):
 		
-		self.helpCmd='xdg-open https://wiki.edu.gva.es/lliurex/tiki-index.php?page=Integración+con+las+WiFis+educativas+de+la+GVA'
-		
-		self.openHelpT=threading.Thread(target=self._openHelpRet)
-		self.openHelpT.daemon=True
-		self.openHelpT.start()
+		helpUrl='https://wiki.edu.gva.es/lliurex/tiki-index.php?page=Integración+con+las+WiFis+educativas+de+la+GVA'
+		QDesktopServices.openUrl(QUrl(helpUrl))
 
 	#def openHelp
-
-	def _openHelpRet(self):
-
-		os.system(self.helpCmd)
-
-	#def _openHelpRet
 
 	@Slot()
 	def closeApplication(self):
 
 		self.closeGui=False
-		if not self.errorInPassword:
-			if self.settingsWifiChanged:
-				self.showChangesDialog=True
-			else:
-				self.closeGui=True
-				LliurexWifiControl.n4dMan.writeLog("Close Session")
+
+		if self.changesInWifiSettings:
+			self.showChangesDialog=True
 		else:
-			self.closeGui=False
+			self.closeGui=True
+			self.n4dMan.writeLog("Close Session")
 
 	#def closeApplication
 	
-	on_currentStack=Signal()
-	currentStack=Property(int,_getCurrentStack,_setCurrentStack, notify=on_currentStack)
-	
-	on_currentOptionsStack=Signal()
-	currentOptionsStack=Property(int,_getCurrentOptionsStack,_setCurrentOptionsStack, notify=on_currentOptionsStack)
-
-	on_showSpinner=Signal()
-	showSpinner=Property(bool,_getShowSpinner,_setShowSpinner,notify=on_showSpinner)
-	
-	on_isWifiEnabled=Signal()
-	isWifiEnabled=Property(bool,_getIsWifiEnabled,_setIsWifiEnabled,notify=on_isWifiEnabled)
-	
-	on_currentWifiOption=Signal()
-	currentWifiOption=Property(int,_getCurrentWifiOption,_setCurrentWifiOption, notify=on_currentWifiOption)
-
-	on_currentPassword=Signal()
-	currentPassword=Property(str,_getCurrentPassword,_setCurrentPassword,notify=on_currentPassword)
-
-	on_passwordEntryEnabled=Signal()
-	passwordEntryEnabled=Property(bool,_getPasswordEntryEnabled,_setPasswordEntryEnabled,notify=on_passwordEntryEnabled)
-
-	on_showEditPasswordBtn=Signal()
-	showEditPasswordBtn=Property(bool,_getShowEditPasswordBtn,_setShowEditPasswordBtn,notify=on_showEditPasswordBtn)
-	
-	on_showConfirmPassword=Signal()
-	showConfirmPassword=Property(bool,_getShowConfirmPassword,_setShowConfirmPassword,notify=on_showConfirmPassword)
-	
-	on_errorInPassword=Signal()
-	errorInPassword=Property(bool,_getErrorInPassword,_setErrorInPassword,notify=on_errorInPassword)
-
-	on_showClearPasswordBtn=Signal()
-	showClearPasswordBtn=Property(bool,_getShowClearPasswordBtn,_setShowClearPasswordBtn,notify=on_showClearPasswordBtn)
-
-	on_settingsWifiChanged=Signal()
-	settingsWifiChanged=Property(bool,_getSettingsWifiChanged,_setSettingsWifiChanged, notify=on_settingsWifiChanged)
-
-	on_showSettingsMessage=Signal()
-	showSettingsMessage=Property('QVariantList',_getShowSettingsMessage,_setShowSettingsMessage,notify=on_showSettingsMessage)
-
-	on_showChangesDialog=Signal()
-	showChangesDialog=Property(bool,_getShowChangesDialog,_setShowChangesDialog,notify=on_showChangesDialog)
-
-	on_showCDCWarning=Signal()
-	showCDCWarning=Property(bool,_getShowCDCWarning,_setShowCDCWarning,notify=on_showCDCWarning)
-	
-	on_closePopUp=Signal()
-	closePopUp=Property(bool,_getClosePopUp,_setClosePopUp, notify=on_closePopUp)
-
-	on_closeGui=Signal()
-	closeGui=Property(bool,_getCloseGui,_setCloseGui, notify=on_closeGui)
-
-
 #class LliurexWifiControl
-
