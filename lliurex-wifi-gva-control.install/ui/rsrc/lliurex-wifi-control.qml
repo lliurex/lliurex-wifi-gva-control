@@ -2,7 +2,6 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import QtQuick.Window
-import org.kde.kirigami as Kirigami
 
 ApplicationWindow {
     id:mainWindow
@@ -20,8 +19,8 @@ ApplicationWindow {
     maximumHeight: 500 + 2 * margin
 
     Component.onCompleted: {
-        x = Screen.width / 2 - width / 2
-        y = Screen.height / 2 - height /2
+        x = Screen.width / 2 - minimumWidth / 2
+        y = Screen.height / 2 - minimumHeight /2
     }
 
     
