@@ -5,45 +5,64 @@ import org.kde.kirigami as Kirigami
 
 
 Rectangle{
+    id:loadRoot
     visible: true
-    Layout.fillWidth:true
-    Layout.fillHeight: true
+
     color:"transparent"
 
-    GridLayout{
-        id: loadGrid
-        rows: 3
-        flow: GridLayout.TopToBottom
-        anchors.centerIn:parent
+    ColumnLayout {
+        id: mainLoaderLayout
+        anchors.centerIn: parent
+        width: parent.width * 0.9
+        spacing: 15
 
-        RowLayout{
-            Layout.fillWidth: true
-            Layout.alignment:Qt.AlignHCenter
+        ColumnLayout{
+            Layout.alignment: Qt.AlignHCenter
             visible: wifiControlBridge.showSpinner
+            spacing:10
 
-            Rectangle{
-                color:"transparent"
-                width:30
-                height:30
-                
-                AnimatedImage{
-                    source: "/usr/share/lliurex-wifi-gva-control/rsrc/loading.gif"
-                    transform: Scale {xScale:0.45;yScale:0.45}
+            Image{
+                id:spinnerImage
+                source: "loading.png"
+                Layout.preferredWidth: 24
+                Layout.preferredHeight: 24
+                Layout.alignment: Qt.AlignHCenter
+                fillMode: Image.PreserveAspectFit
+                smooth:false
+                antialiasing:false
+
+                rotation:0
+            }
+            
+            Timer{
+                id:rotationTimer
+                running:(spinnerImage!==null && loadRoot!==null) && spinnerImage.visible && loadRoot.visible
+                repeat:true
+                interval:100
+
+                onTriggered:{
+
+                    if (spinnerImage && typeof spinnerImage.rotation!="undefined"){
+                        var nextRotation= spinnerImage.rotation-30
+                        if (nextRotation<0){
+                            nextRotation=330
+                        }
+                        spinnerImage.rotation=nextRotation
+                     }else{
+                        stop()
+                     }   
+
                 }
             }
-        }
 
-        RowLayout{
-            Layout.fillWidth: true
-            Layout.alignment:Qt.AlignHCenter
-            visible: wifiControlBridge.showSpinner
-            Text{
-                id:loadtext
+            Text {
+                id: loadText
                 text:i18nd("lliurex-wifi-gva-control", "Loading. Wait a moment...")
-                font.family: "Quattrocento Sans Bold"
                 font.pointSize: 10
-                Layout.alignment:Qt.AlignHCenter
+                color: palette.windowText
+                Layout.alignment: Qt.AlignHCenter
             }
+
         }
 
         Kirigami.InlineMessage {
@@ -51,10 +70,7 @@ Rectangle{
             visible:!wifiControlBridge.showSpinner
             text:i18nd("lliurex-wifi-gva-control","Error loading configuration")
             type:Kirigami.MessageType.Error;
-            Layout.minimumWidth:640
             Layout.fillWidth:true
-            Layout.rightMargin:15
-            Layout.leftMargin:15
         }
     }
 }

@@ -1,115 +1,91 @@
+import org.kde.kirigami as Kirigami
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 
 Popup {
     id: customDialog
-    property alias dialogVisible:customDialog.visible
-    property alias dialogMsg:dialogText.text
-    property alias btnAcceptVisible:dialogApplyBtn.visible
-    property alias btnDiscardVisible:dialogDiscardBtn.visible
-    property alias btnDiscardText:dialogDiscardBtn.text
-    property alias btnDiscardIcon:dialogDiscardBtn.icon.name
-    property alias btnCancelText:dialogCancelBtn.text
-    property alias btnCancelIcon:dialogCancelBtn.icon.name
+    
+    property bool dialogVisible: false
+    visible: dialogVisible
+    
+    property alias dialogMsg: dialogText.text
+    property int dialogWidth:400
+    
+    property alias btnAcceptVisible: dialogApplyBtn.visible
+    
+    property alias btnDiscardText: dialogDiscardBtn.text
+    property alias btnDiscardVisible: dialogDiscardBtn.visible
+    property alias btnDiscardIcon: dialogDiscardBtn.icon.name
+    
+    property alias btnCancelText: dialogCancelBtn.text
+    property alias btnCancelIcon: dialogCancelBtn.icon.name
+
     signal dialogApplyClicked
     signal discardDialogClicked
-    signal cancelDialogClicked
+    signal rejectDialogClicked
 
-    visible:dialogVisible
-    modal:true
+    modal: true
     anchors.centerIn: Overlay.overlay
-    closePolicy:Popup.NoAutoClose
-    background:Rectangle{
-        color:"#ebeced"
-        border.color:"#b8b9ba"
-        border.width:1
-        radius:5.0
-    }
-    
-    contentItem: Rectangle {
+    closePolicy: Popup.NoAutoClose
+
+    background: Rectangle {
         color: "#ebeced"
-        implicitWidth: 420
-        implicitHeight: 105
-        anchors.topMargin:5
-        anchors.leftMargin:5
+        border.color: "#b8b9ba"
+        border.width: 1
+        radius: 5
+    }
 
-        Image{
-            id:dialogIcon
-            source:"/usr/share/icons/breeze/status/64/dialog-warning.svg"
+    contentItem: Item {
+        implicitWidth: customDialog.dialogWidth
+        implicitHeight: 140
 
-        }
-        
-        Text {
-            id:dialogText
-            text:dialogMsg
-            font.family: "Quattrocento Sans Bold"
-            font.pointSize: 10
-            width:330
-            wrapMode:Text.WordWrap
-            anchors.left:dialogIcon.right
-            anchors.verticalCenter:dialogIcon.verticalCenter
-            anchors.leftMargin:10
-        
+        RowLayout {
+            id: contentRow
+            anchors.top: parent.top
+            anchors.left: parent.left
+            anchors.right: parent.right
+            spacing: 15
+
+            Kirigami.Icon {
+                id: iconInternal
+                source:"dialog-warning"
+                Layout.preferredWidth: Kirigami.Units.iconSizes.huge
+                Layout.preferredHeight: Kirigami.Units.iconSizes.huge
+            }
+            
+            Text {
+                id: dialogText
+                font.pointSize: 10
+                Layout.fillWidth: true
+                wrapMode: Text.WordWrap
+                verticalAlignment: Text.AlignVCenter
+                color: "#31363b"
+            }
         }
       
         RowLayout {
-            anchors.bottom:parent.bottom
-            anchors.right:parent.right
-            anchors.topMargin:15
-            spacing:10
+            anchors.bottom: parent.bottom
+            anchors.right: parent.right
+            anchors.margins: 10
+            spacing: 10
 
             Button {
-                id:dialogApplyBtn
-                display:AbstractButton.TextBesideIcon
-                icon.name:"dialog-ok.svg"
-                text: i18nd("lliurex-wifi-gva-control","Apply")
-                visible: btnAcceptVisible 
-                focus:true
-                font.family: "Quattrocento Sans Bold"
-                font.pointSize: 10
-                Keys.onReturnPressed: dialogApplyBtn.clicked()
-                Keys.onEnterPressed: dialogApplyBtn.clicked()
-                onClicked:{
-                    dialogApplyClicked()
-                }
-
+                id: dialogApplyBtn
+                icon.name: "dialog-ok"
+                text:i18nd("lliurex-wifi-gva-control","Accept")
+                onClicked: dialogApplyClicked() 
             }
 
             Button {
-                id:dialogDiscardBtn
-                display:AbstractButton.TextBesideIcon
-                icon.name:btnDiscardIcon
-                text:btnDiscardText
-                visible:btnDiscardVisible
-                focus:true
-                font.family: "Quattrocento Sans Bold"
-                font.pointSize: 10
-                Keys.onReturnPressed: dialogDiscardBtn.clicked()
-                Keys.onEnterPressed: dialogDiscardBtn.clicked()
-                onClicked:{
-                    discardDialogClicked()
-                }
-
-
+                id: dialogDiscardBtn
+                onClicked: discardDialogClicked()
             }
 
             Button {
-                id:dialogCancelBtn
-                display:AbstractButton.TextBesideIcon
-                icon.name:btnCancelIcon
-                text:btnCancelText 
-                focus:true
-                font.family: "Quattrocento Sans Bold"
-                font.pointSize: 10
-                Keys.onReturnPressed: dialogCancelBtn.clicked()
-                Keys.onEnterPressed: dialogCancelBtn.clicked()
-                onClicked:{
-                    cancelDialogClicked()
-                }
-        
+                id: dialogCancelBtn
+                onClicked: rejectDialogClicked()
             }
-
         }
     }
- }
+}
