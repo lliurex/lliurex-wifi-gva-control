@@ -25,7 +25,7 @@ GridLayout{
             MenuOptionBtn {
                 id:wifiItem
                 optionText:i18nd("lliurex-wifi-gva-control","Configuration")
-                optionIcon:"/usr/share/icons/breeze/actions/22/configure.svg"
+                optionIcon:"actions/24/configure.svg"
                 optionEnabled:true
                 Connections{
                     function onMenuOptionClicked(){
@@ -37,7 +37,7 @@ GridLayout{
             MenuOptionBtn {
                 id:helpItem
                 optionText:i18nd("lliurex-wifi-gva-control","Help")
-                optionIcon:"/usr/share/icons/breeze/actions/22/help-contents.svg"
+                optionIcon:"actions/24/help-contents.svg"
                 Connections{
                     function onMenuOptionClicked(){
                         wifiControlBridge.openHelp();
