@@ -1,3 +1,10 @@
+lliurex-wifi-gva-control (1.25.15) noble; urgency=medium
+
+  * Refactorized gui
+  * Migrated cli from python3-clint to argparser
+
+ -- Juan Ramon Pelegrina <juapesai@hotmail.com>  Fri, 26 Jun 2026 11:58:46 +0200
+
 lliurex-wifi-gva-control (1.25.14) noble; urgency=medium
 
   * Fixed custom dialog template
