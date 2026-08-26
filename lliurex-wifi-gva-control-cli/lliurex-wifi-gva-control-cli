@@ -20,7 +20,7 @@ if __name__ == '__main__':
             "    lliurex-wifi-gva-control-cli [FLAGS...] ACTION\n\n"
             "Actions:\n"
             "    currentconfig:         Shows information about current Wifi GVA configuration\n"
-            "    enablewifi             WIFI_EDU|ALUMNAT <PASSWORD> <CONFIRM_PASSWORD>: Activate automatic connection to Wifi GVA\n"
+            "    enablewifi             WIFI_EDU|ALUMNAT|EASY_LOGIN <PASSWORD> <CONFIRM_PASSWORD>: Activate automatic connection to Wifi GVA\n"
             "    disablewifi:           Disable automatic connection to the Wifi GVA\n"
             "    showalumnatpassword:   Show current password for alumnat user\n"
             "    updatealumnatpassword  <PASSWORD> <CONFIRM_PASSWORD>: Update the password for alumnat user\n"
@@ -69,7 +69,7 @@ if __name__ == '__main__':
     subparsers.add_parser("currentconfig", parents=[parent_parser])
 
     parser_enable = subparsers.add_parser("enablewifi", parents=[parent_parser])
-    parser_enable.add_argument("wifi_option", choices=["WIFI_EDU", "ALUMNAT"], nargs="?", default="WIFI_EDU")
+    parser_enable.add_argument("wifi_option", choices=["WIFI_EDU", "ALUMNAT", "EASY_LOGIN"], nargs="?", default="WIFI_EDU")
     parser_enable.add_argument("password", nargs="?", default="")
     parser_enable.add_argument("confirm_password", nargs="?", default="")
 

@@ -51,7 +51,7 @@ ApplicationWindow {
         
         Rectangle {
             id: bannerBox
-            color: "#000000"
+            color: "transparent"
             Layout.fillWidth: true
             Layout.preferredHeight: 120
 

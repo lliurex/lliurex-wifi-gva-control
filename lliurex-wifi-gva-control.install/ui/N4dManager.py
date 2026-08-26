@@ -1,5 +1,7 @@
 #!/usr/bin/python3
 
+from enum import IntEnum
+
 import n4d.client
 import os
 import subprocess
@@ -27,6 +29,15 @@ class N4dManager:
 	KIRIGAMI_MSG_WARNING=2
 	KIRIGAMI_MSG_INFO=3
 
+	class WifiMode(IntEnum):
+		
+		DISABLE=0
+		ENABLE=1
+		LEGACY=2
+		AUTOLOGIN=3
+		EASYLOGIN=4
+
+	#class WifiMode
 
 	def __init__(self):
 
@@ -53,14 +64,6 @@ class N4dManager:
 
 	def loadConfig(self,step="Initial"):
 
-		'''
-			Values:
-				- 0: Disable
-				- 1: WIFI_EDU
-				- 2: WIFI_EDU:for backward compatibility 
-				- 3: WIFI_EDU+AUTOLOGIN
-		'''
-
 		try:
 			self.writeLog(f"Wifi Control. {step} configuration:")
 			self.wifiConfiguration=self.client.WifiEduGva.get_settings()
@@ -70,8 +73,8 @@ class N4dManager:
 			self.writeLog(f"- Error loading configuration: {e}")
 			return {"status":False,"code":N4dManager.ERROR_LOADING_CONFIGURATION,"type":N4dManager.KIRIGAMI_MSG_ERROR}
 
-		if self.wifiConfiguration in [0,1,2,3]:
-			if self.wifiConfiguration==0:
+		if self.wifiConfiguration in N4dManager.WifiMode.__members__.values():
+			if self.wifiConfiguration==N4dManager.WifiMode.DISABLE:
 				self.isWifiEnabled=False
 				self.currentWifiOption=1
 			else:
@@ -112,7 +115,7 @@ class N4dManager:
 	    confirmPassword = confirmPasswordEntry
 	    currentWifiOption = info.get('currentWifiOption') if info.get('isWifiEnabled') else 0
 
-	    if currentWifiOption == 3:
+	    if currentWifiOption in (N4dManager.WifiMode.AUTOLOGIN,N4dManager.WifiMode.EASYLOGIN):
 	        if not currentPassword:
 	            return {"status": False, "code": N4dManager.ERROR_PASSWORD_EMPTY, "type": N4dManager.KIRIGAMI_MSG_ERROR}
 	        if (currentPassword != self.currentPassword) and (currentPassword != confirmPassword):
@@ -120,14 +123,14 @@ class N4dManager:
 
 	    if currentWifiOption != self.wifiConfiguration:
 	        changeWifi = True
-	        if currentWifiOption == 3:
+	        if currentWifiOption in (N4dManager.WifiMode.AUTOLOGIN,N4dManager.WifiMode.EASYLOGIN):
 	            actionAutologin = 0
 	        elif self.currentAutologinStatus:
 	            actionAutologin = 1
 
 	    if currentPassword != self.currentPassword:
 	        changePassword = True
-	        if currentWifiOption == 3 and actionAutologin == -1:
+	        if currentWifiOption in (N4dManager.WifiMode.AUTOLOGIN,N4dManager.WifiMode.EASYLOGIN) and actionAutologin == -1:
 	            actionAutologin = 2 if self.currentAutologinStatus else 0
 
 	    if changeWifi:

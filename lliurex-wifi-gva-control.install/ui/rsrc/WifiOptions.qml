@@ -100,6 +100,17 @@ Rectangle{
                         confirmPasswordValue.text=""
                     }
                 }
+
+                RadioButton{
+                    id:easyLoginOption
+                    checked:getWifiOption(4)
+                    enabled:enableWifiCb.checked
+                    text:i18nd("lliurex-wifi-gva-control","Access using Easy-Login")
+                    onToggled:{
+                        wifiControlBridge.manageWifiOptions(4)
+                        confirmPasswordValue.text=""
+                    }
+                }
             }
         }
 
@@ -124,7 +135,7 @@ Rectangle{
                     horizontalAlignment:TextInput.AlignLeft
                     focus:true
                     text:wifiControlBridge.currentPassword
-                    enabled:autoLoginOption.checked
+                    enabled:autoLoginOption.checked || easyLoginOption.checked
                     readOnly:!wifiControlBridge.passwordEntryEnabled
                     implicitWidth:200
                     echoMode:TextInput.Password
@@ -140,7 +151,7 @@ Rectangle{
                     display:AbstractButton.IconOnly
                     icon.name:getConfiguration(passwordValue.echoMode,"iconName")
                     hoverEnabled:true
-                    visible:enableWifiCb.checked && autoLoginOption.checked
+                    visible:enableWifiCb.checked && (autoLoginOption.checked || easyLoginOption.checked)
                     enabled: visible && passwordValue.text!==""
                     ToolTip.delay: 1000
                     ToolTip.timeout: 3000
@@ -160,7 +171,7 @@ Rectangle{
                     icon.name:!wifiControlBridge.passwordEntryEnabled?"document-edit":"dialog-cancel"
                     visible:wifiControlBridge.showEditPasswordBtn
                     hoverEnabled:true
-                    enabled: enableWifiCb.checked && autoLoginOption.checked
+                    enabled: enableWifiCb.checked && (autoLoginOption.checked || easyLoginOption.checked)
                     ToolTip.delay: 1000
                     ToolTip.timeout: 3000
                     ToolTip.visible: hovered
@@ -411,6 +422,10 @@ Rectangle{
 
         if (currentOption === 3){
             return option === 3
+        }
+
+        if (currentOption === 4){
+            return option === 4
         }
 
         return false

@@ -13,7 +13,7 @@ _lliurex-wifi-gva-control-cli()
 
     case "${prev}" in 
         enablewifi)
-            local running="WIFI_EDU ALUMNAT"
+            local running="WIFI_EDU ALUMNAT EASY_LOGIN"
             COMPREPLY=( $(compgen -W "${running}" -- ${cur}) )
             return 0
             ;;

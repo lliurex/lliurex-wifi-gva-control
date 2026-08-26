@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+from enum import IntEnum
+
 import os
 import subprocess
 import n4d.client
@@ -14,6 +16,16 @@ import codecs
 signal.signal(signal.SIGINT,signal.SIG_IGN)
 
 class WifiGvaControlCliManager(object):
+
+	class WifiMode(IntEnum):
+		
+		DISABLE=0
+		ENABLE=1
+		LEGACY=2
+		AUTOLOGIN=3
+		EASYLOGIN=4
+
+	#class WifiMode
 
 	def __init__(self,mode):
 		
@@ -42,7 +54,7 @@ class WifiGvaControlCliManager(object):
 			print(f'      - Default option for Wifi Connection: {defaultConnection}')
 		print(f'      - Password for alumnat user configured: {self.isAlumnatPasswordConfigured}')
 
-		if self.isWifiConnectionEnabled and self.currentWifiConnection!=3:
+		if self.isWifiConnectionEnabled and self.currentWifiConnection not in (WifiGvaControlCliManager.WifiMode.AUTOLOGIN,WifiGvaControlCliManager.WifiMode.EASYLOGIN):
 			if not self.isCDCIntegrationEnabled:
 				print('   [Wifi-GVA-Control]: WARNING It is necessary to activate the integration with ID to be able to log in with WIFI GVA')
 
@@ -77,7 +89,7 @@ class WifiGvaControlCliManager(object):
 			print('   [Wifi-GVA-Control]: Wifi connection with the indicated option already configured. Nothing to do')
 			return 0
 		
-		if wifiValue==3: 
+		if wifiValue in (WifiGvaControlCliManager.WifiMode.AUTOLOGIN,WifiGvaControlCliManager.WifiMode.EASYLOGIN): 
 			if not self.isAlumnatPasswordConfigured:
 				if not self._checkPassword(password,confirmPassword):
 					return 0
@@ -100,10 +112,10 @@ class WifiGvaControlCliManager(object):
 			self._writeLog("Changes in configuration of Wifi GVA:")
 			self._writeLog(f"- Action: activate Wifi connection with option: {wifiValue}")
 			self._createClient()
-			ret=self.n4dClient.WifiEduGva.set_settings(wifiValue)
+			ret=self.n4dClient.WifiEduGva.set_settings(int(wifiValue))
 			self._writeLog("- Result: Changes apply successful")
 
-			if wifiValue!=3:
+			if wifiValue not in (WifiGvaControlCliManager.WifiMode.AUTOLOGIN,WifiGvaControlCliManager.WifiMode.EASYLOGIN):
 				if self.isAutologinConfigured:
 					self._writeLog("- Action: disable autologin")
 					ret=self.n4dClient.AlumnatAccountManager.disable_alumnat_user()
@@ -122,7 +134,7 @@ class WifiGvaControlCliManager(object):
 			print('   [Wifi-GVA-Control]: Action completed successfull')
 			self._getInfo("End")
 			
-			if wifiValue!=3 and not self.isCDCIntegrationEnabled:
+			if wifiValue not in (WifiGvaControlCliManager.WifiMode.AUTOLOGIN,WifiGvaControlCliManager.WifiMode.EASYLOGIN) and not self.isCDCIntegrationEnabled:
 				print('   [Wifi-GVA-Control]: WARNING It is necessary to activate the integration with ID to be able to log in with WIFI GVA')
 			return 0
 
@@ -211,8 +223,8 @@ class WifiGvaControlCliManager(object):
 			print('   [Wifi-GVA-Control]: Password for alumnat user already removed. Nothing to do')
 			return 0
 
-		if self.currentWifiConnection==3:
-			print('   [Wifi-GVA-Control]: Password for alumnat user cannot be deleted because the AUTOLOGIN option is activated')
+		if self.currentWifiConnection in (WifiGvaControlCliManager.WifiMode.AUTOLOGIN,WifiGvaControlCliManager.WifiMode.EASYLOGIN):
+			print('   [Wifi-GVA-Control]: Password for alumnat user cannot be deleted because the AUTOLOGIN or EASYLOGIN option is activated')
 			return 0
 		
 		if not self.unattendedMode:
@@ -293,22 +305,14 @@ class WifiGvaControlCliManager(object):
 
 	def _getInfo(self,step="Initial"):
 
-		'''
-			Values:
-				- 0: Disable
-				- 1: WIFI_EDU
-				- 2: WIFI_EDU: for backward compatibility
-				- 3: AUTOLOGIN
-		'''
-
 		try:
 			self._writeLog(f"Wifi Control. {step} configuration")
 			wifiConfiguration=self.n4dClient.WifiEduGva.get_settings()
 			wifiPassword=self.n4dClient.WifiEduGva.get_autologin()
 			self.isAutologinConfigured=self._checkIfAutologinIsEnabled()
 
-			if wifiConfiguration in [0,1,2,3]:
-				if wifiConfiguration==0:
+			if wifiConfiguration in WifiGvaControlCliManager.WifiMode.__members__.values():
+				if wifiConfiguration==WifiGvaControlCliManager.WifiMode.DISABLE:
 					self.isWifiConnectionEnabled=False
 					self.currentWifiConnection=-1
 				else:
@@ -337,11 +341,20 @@ class WifiGvaControlCliManager(object):
 	def _mappingWifiOption(self,wifiOption,mappingType):
 
 		if mappingType=="TextToInt":
-			mapping ={"WIFI_EDU":1,"ALUMNAT":3}
+			mapping ={
+				"WIFI_EDU":WifiGvaControlCliManager.WifiMode.ENABLE,
+				"ALUMNAT": WifiGvaControlCliManager.WifiMode.AUTOLOGIN,
+				"EASY_LOGIN": WifiGvaControlCliManager.WifiMode.EASYLOGIN
+			}
 			return mapping.get(wifiOption,-1)
 		else:
-			mapping={1:"WIFI_EDU",2:"WIFI_EDU",3:"ALUMNAT"}
-			return mapping.get(wifiOption)
+			mapping={
+				WifiGvaControlCliManager.WifiMode.ENABLE:"WIFI_EDU",
+				WifiGvaControlCliManager.WifiMode.LEGACY:"WIFI_EDU",
+				WifiGvaControlCliManager.WifiMode.AUTOLOGIN:"ALUMNAT",
+				WifiGvaControlCliManager.WifiMode.EASYLOGIN:"EASY_LOGIN"
+			}
+			return mapping.get(wifiOption,"UNKNOWN")
 
 	#def _mappingWifiOption
 
