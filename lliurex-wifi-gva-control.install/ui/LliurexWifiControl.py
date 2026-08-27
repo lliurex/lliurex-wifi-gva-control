@@ -393,7 +393,7 @@ class LliurexWifiControl(QObject):
 		self.showEditPasswordBtn=False
 		self.passwordCleared=False
 
-		if self.isWifiEnabled and self.currentWifiOption in (N4dManager.N4dManager.WifiMode.AUTOLOGIN,N4dManager.N4dManager.WifiMode.EASYLOGIN):
+		if self.isWifiEnabled and self.currentWifiOption in (self.n4dMan.WifiMode.AUTOLOGIN,self.n4dMan.WifiMode.EASYLOGIN):
 			if not self.currentPassword:
 				self.passwordEntryEnabled=True
 				self.showConfirmPassword=True
@@ -410,7 +410,7 @@ class LliurexWifiControl(QObject):
 	def _manageClearPasswordBtn(self):
 
 		hasPassword=bool(self.currentPassword)
-		notOption3OrDisabled=(self.currentWifiOption not in (N4dManager.N4dManager.WifiMode.AUTOLOGIN,N4dManager.N4dManager.WifiMode.EASYLOGIN) or not self.isWifiEnabled)
+		notOption3OrDisabled=(self.currentWifiOption not in (self.n4dMan.WifiMode.AUTOLOGIN,self.n4dMan.WifiMode.EASYLOGIN) or not self.isWifiEnabled)
 		
 		self.showClearPasswordBtn=hasPassword and notOption3OrDisabled
 
@@ -467,7 +467,7 @@ class LliurexWifiControl(QObject):
 	@Slot()
 	def editPasswordBtn(self):
 
-		if self.currentWifiOption in (N4dManager.N4dManager.WifiMode.AUTOLOGIN,N4dManager.N4dManager.WifiMode.EASYLOGIN):
+		if self.currentWifiOption in (self.n4dMan.WifiMode.AUTOLOGIN,self.n4dMan.WifiMode.EASYLOGIN):
 			self.passwordEntryEnabled=not self.passwordEntryEnabled
 			self.showConfirmPassword=not self.showConfirmPassword
 
@@ -489,13 +489,13 @@ class LliurexWifiControl(QObject):
 
 		self.showSettingsMessage={"show":False,"msgCode":"","type":""}
 
-		if not self.passwordCleared or self.currentWifiOption in (N4dManager.N4dManager.WifiMode.AUTOLOGIN,N4dManager.N4dManager.WifiMode.EASYLOGIN):
+		if not self.passwordCleared or self.currentWifiOption in (self.n4dMan.WifiMode.AUTOLOGIN,self.n4dMan.WifiMode.EASYLOGIN):
 			self.currentPassword=self.n4dMan.currentPassword
 			self.currentWifiSettings["currentPassword"]=self.currentPassword
 			self.confirmPasswordEntry=""
 			self.passwordCleared=False
 
-		if not self.isWifiEnabled or self.currentWifiOption not in (N4dManager.N4dManager.WifiMode.AUTOLOGIN,N4dManager.N4dManager.WifiMode.EASYLOGIN):
+		if not self.isWifiEnabled or self.currentWifiOption not in (self.n4dMan.WifiMode.AUTOLOGIN,self.n4dMan.WifiMode.EASYLOGIN):
 			self.passwordEntryEnabled=False
 			self.showConfirmPassword=False
 			self.showEditPasswordBtn=False
@@ -536,7 +536,7 @@ class LliurexWifiControl(QObject):
 		self._initForm()
 		self.showSettingsMessage={"show":True,"msgCode":ret.get("code"),"type":ret.get("type")}
 
-		isCDCMissign=self.isWifiEnabled and self.currentWifiOption not in (N4dManager.N4dManager.WifiMode.AUTOLOGIN,N4dManager.N4dManager.WifiMode.EASYLOGIN) and not self.n4dMan.getIntegrationCDCStatus()
+		isCDCMissign=self.isWifiEnabled and self.currentWifiOption not in (self.n4dMan.WifiMode.AUTOLOGIN,self.n4dMan.WifiMode.EASYLOGIN) and not self.n4dMan.getIntegrationCDCStatus()
 		if isCDCMissign:
 			self.showCDCWarning=True
 		
